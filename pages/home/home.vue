@@ -1,0 +1,136 @@
+<template>
+	<view class="home-page page-base p-20">
+		<!-- 顶部导航 -->
+		<view class="tab-list flex-row-between-center" style="justify-content:space-evenly;">
+			<view class="tab-item" @click="$wxRouter.toPage('/pages/home/hotList')">
+				<image class="w-h-80" src="@/static/logo.png"></image>
+				<view class="tab-text">热门</view>
+			</view>
+			<view class="tab-item" @click="$wxRouter.toPage('/pages/home/hotList')">
+				<image class="w-h-80" src="@/static/logo.png"></image>
+				<view class="tab-text">最新</view>
+			</view>
+			<view class="tab-item" @click="$wxRouter.toPage('/pages/home/newList')">
+				<image class="w-h-80" src="@/static/logo.png"></image>
+				<view class="tab-text">推荐</view>
+			</view>
+		</view>
+
+		<!-- 视频列表 -->
+		<view class="video-list m-t-25 flex-row-between-center flex-wrap">
+			<view v-for="(item,index) in pageList.data" :key="index" @click="$wxRouter.toPage('/pages/home/video?mid=' + item.id)"
+				class="video-item">
+				<imageUrl class="w-345 h-540" :src="item.cover"></imageUrl>
+				<view class="flex-row-start-center p-lr-20 h-70">
+					<view v-if="item.is_hot" class="hot">热门</view>
+					<view class="name text-line-1">{{item.name}}</view>
+				</view>
+			</view>
+		</view>
+		<pageList :pageList="pageList"></pageList>
+
+		<!-- 继续观看 -->
+		<view class="continueWatch">
+			<!-- <image class="w-h-full" src="../../static/logo.png"></image> -->
+		</view>
+	</view>
+</template>
+
+<script>
+	import pageList from '@/mixin/pageList.js';
+
+	export default {
+		mixins: [pageList],
+		data() {
+			return {}
+		},
+		onLoad() {
+			console.log(this)
+		},
+		onReady() {},
+		onPullDownRefresh() {},
+		onReachBottom() {
+
+		},
+		methods: {
+			pageListDataPageRequest() {
+				return new Promise((r, a) => {
+					this.$api.movies.list.request().then(data => {
+						console.log('获取数据', data)
+						r(data.data)
+					})
+				})
+			}
+		}
+	}
+</script>
+
+<style lang="scss">
+	.home-page {
+		.tab-list {
+			position: fixed;
+			top: 0rpx;
+			/* #ifdef H5 */
+			top: 44px;
+			/* #endif */
+			left: 0;
+			width: 100%;
+			padding: 20rpx 0 5rpx 0rpx;
+			background-color: #fff;
+			z-index: 2;
+
+			.tab-item {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+			}
+		}
+
+		.video-list {
+			margin-top: 126rpx;
+		}
+
+		.video-item {
+			margin-top: 20rpx;
+			width: 345rpx;
+			border-radius: 20rpx;
+			background-color: #fff;
+			box-shadow: 0rpx 6rpx 16rpx 6rpx #dadada;
+			overflow: hidden;
+			font-size: 0rpx;
+
+			.hot {
+				margin-right: 10rpx;
+				width: 70rpx;
+				height: 30rpx;
+				font-size: 24rpx;
+				line-height: 24rpx;
+				color: #fff;
+				background-color: #b3f10d;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+
+			.name {
+				color: #000;
+				flex: 1;
+				font-size: 24rpx;
+			}
+		}
+
+		.continueWatch {
+			position: fixed;
+			/* #ifdef H5 */
+			bottom: 60px;
+			/* #endif */
+			bottom: 20px;
+			left: 0rpx;
+			width: 180rpx;
+			height: 270rpx;
+			border-radius: 10rpx;
+			background-color: red;
+		}
+	}
+</style>

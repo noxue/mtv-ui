@@ -1,0 +1,95 @@
+{
+	"easycom": {
+		"^u-(.*)": "@/uview-ui/components/u-$1/u-$1.vue",
+		"emptyBottom": "@/components/base/emptyBottom.vue",
+		"pageList": "@/components/base/pageList.vue",
+		"imageUrl": "@/components/base/imageUrl.vue"
+	},
+	"pages": [{
+			"path": "pages/home/home",
+			"style": {
+				"navigationBarTitleText": "小剧场"
+			}
+		}, {
+			"path": "pages/home/hotList",
+			"style": {
+				"navigationBarTitleText": "热门"
+			}
+		}, {
+			"path": "pages/home/newList",
+			"style": {
+				"navigationBarTitleText": "最新"
+			}
+		}, {
+			"path": "pages/home/rankList",
+			"style": {
+				"navigationBarTitleText": "排行"
+			}
+		}, {
+			"path": "pages/home/video",
+			"style": {
+				"navigationBarTitleText": "视频",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/my/my",
+			"style": {
+				"navigationBarTitleText": "我的"
+			}
+		}, {
+			"path": "pages/my/followsList",
+			"style": {
+				"navigationBarTitleText": "我的追剧"
+			}
+		},
+		{
+			"path": "pages/my/expenseList",
+			"style": {
+				"navigationBarTitleText": "消费列表"
+			}
+		},
+		{
+			"path": "pages/my/recentsList",
+			"style": {
+				"navigationBarTitleText": "观看历史"
+			}
+		},
+		{
+			"path": "pages/my/loveList",
+			"style": {
+				"navigationBarTitleText": "我的喜欢"
+			}
+		},
+		{
+			"path": "pages/my/rechargeList",
+			"style": {
+				"navigationBarTitleText": "充值列表"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	},
+	"tabBar": {
+		"backgroundColor": "#FFF",
+		"borderStyle": "black",
+		"color": "#616161",
+		"selectedColor": "#0052D9",
+		"list": [{
+			"pagePath": "pages/home/home",
+			"text": "小剧场",
+			"iconPath": "static/logo.png",
+			"selectedIconPath": "static/logo.png"
+		}, {
+			"pagePath": "pages/my/my",
+			"text": "我的",
+			"iconPath": "static/logo.png",
+			"selectedIconPath": "static/logo.png"
+		}]
+	},
+	"uniIdRouter": {}
+}

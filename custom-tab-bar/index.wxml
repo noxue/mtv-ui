@@ -1,0 +1,16 @@
+<view class="tab-bar-fixed">
+	<image class="tab-bg"src="/static/icon/tab-publish-2.png"></image>
+	<view class="tab-bar">
+		<view wx:for="{{list}}" wx:key="index" class="tab-bar-item" data-path="{{item.pagePath}}" data-index="{{index}}" bindtap="switchTab">
+			<block wx:if="{{item.isSpecial == false}}">
+        <image class="icon" style="width:{{item.width + 'rpx'}};height:{{item.height + 'rpx'}}" src="{{selected === index ? item.selectedIconPath : item.iconPath}}"></image>
+        <view class="title" style="color: {{selected === index ? selectedColor : color}}">{{ isFanTi == true ? item.text2 : item.text}}</view>
+      </block>
+      <block wx:else>
+        <view style="width:80rpx;height:80rpx;"></view>
+        <view class="title" style="color: {{selected === index ? selectedColor : color}}">{{ isFanTi == true ? item.text2 : item.text}}</view>
+      </block>
+		</view>
+	</view>
+  <view class="empty-view"></view>
+</view>

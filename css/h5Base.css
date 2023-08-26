@@ -1,0 +1,18 @@
+/**
+ * 只有h5才会生效的样式
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+/**
+ * 鼠标变成小手
+ */
+.cursor-pointer {
+  cursor: pointer;
+  user-select: none;
+}

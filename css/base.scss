@@ -1,0 +1,84 @@
+
+/** 宽/高/内边距/外边距，只支持2和5的倍数,最大到750 **/
+/** 文字font-size 支持到 150 **/
+@for $i from 0 through 150 {
+	.w-#{$i * 2} {
+		width: 2rpx * $i;
+	}
+	.w-#{$i * 5} {
+		width: 5rpx * $i;
+	}
+	.h-#{$i * 2} {
+		height: 2rpx * $i;
+	}
+	.h-#{$i * 5} {
+		height: 5rpx * $i;
+	}
+	.w-h-#{$i * 2} {
+		width: 2rpx * $i;
+		height: 2rpx * $i;
+	}
+	.w-h-#{$i * 5} {
+		width: 5rpx * $i;
+		height: 5rpx * $i;
+	}
+
+
+	.m-#{$i} {
+		margin: 1rpx * $i;
+	}
+	.m-tb-#{$i} {
+		margin-top: 1rpx * $i;
+		margin-bottom: 1rpx * $i;
+	}
+	.m-lr-#{$i} {
+		margin-left: 1rpx * $i;
+		margin-right: 1rpx * $i;
+	}
+	.m-t-#{$i} {
+		margin-top: 1rpx * $i;
+	}
+	.m-l-#{$i} {
+		margin-left: 1rpx * $i;
+	}
+	.m-r-#{$i} {
+		margin-right: 1rpx * $i;
+	}
+	.m-b-#{$i} {
+		margin-bottom: 1rpx * $i;
+	}
+  
+  
+	.p-#{$i} {
+		padding: 1rpx * $i;
+	}
+	.p-tb-#{$i} {
+		padding-top: 1rpx * $i;
+		padding-bottom: 1rpx * $i;
+	}
+	.p-lr-#{$i} {
+		padding-left: 1rpx * $i;
+		padding-right: 1rpx * $i;
+	}
+	.p-t-#{$i} {
+		padding-top: 1rpx * $i;
+	}
+	.p-l-#{$i} {
+		padding-left: 1rpx * $i;
+	}
+	.p-r-#{$i} {
+		padding-right: 1rpx * $i;
+	}
+	.p-b-#{$i} {
+		padding-bottom: 1rpx * $i;
+	}
+  
+
+	.font-#{$i} {
+		font-size: 1rpx * $i;
+	}
+	
+	.bR-#{$i}{
+		border-radius: 1rpx * $i;
+	}
+}

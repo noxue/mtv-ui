@@ -1,0 +1,375 @@
+/* flex常用布局模式 */
+/* 换行 */
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+/* 强制不随页面宽度变化，固定宽度 */
+.flex-shrink-0 {
+  flex-shrink: 0;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.flex-row {
+  display: flex !important;
+  flex-direction: row;
+}
+
+.flex-row-start-center {
+  display: flex !important;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.flex-row-start-end {
+  display: flex !important;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-end;
+}
+
+.flex-row-center {
+  display: flex !important;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.flex-row-center-center {
+  display: flex !important;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-row-center-start {
+  display: flex !important;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.flex-row-center-end {
+  display: flex !important;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.flex-row-between {
+  display: flex !important;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.flex-row-between-center {
+  display: flex !important;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.flex-row-between-end {
+  display: flex !important;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.flex-row-end {
+  display: flex !important;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.flex-row-end-center {
+  display: flex !important;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.flex-column {
+  display: flex !important;
+  flex-direction: column;
+}
+
+.flex-column-start-center {
+  display: flex !important;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.flex-column-center {
+  display: flex !important;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.flex-column-center-center {
+  display: flex !important;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-column-between {
+  display: flex !important;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.flex-column-between-center {
+  display: flex !important;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.flex-column-end {
+  display: flex !important;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.flex-column-end-center {
+  display: flex !important;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+/* 绝对定位 */
+.p-top {
+  position: absolute;
+  top: 0;
+}
+
+.p-bottom {
+  position: absolute;
+  bottom: 0;
+}
+
+.p-left {
+  position: absolute;
+  left: 0;
+}
+
+.p-right {
+  position: absolute;
+  right: 0;
+}
+
+.p-top-left {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.p-top-right {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.p-bottom-left {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+.p-bottom-right {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
+.p-row-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.p-col-center {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.p-center-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+}
+
+.fixed-bottom-left {
+  position: fixed;
+  left: 0;
+  bottom: 20rpx;
+  bottom: constant(safe-area-inset-bottom);
+  bottom: env(safe-area-inset-bottom);
+}
+
+/** 外边距 **/
+.m-center {
+  margin: 0 auto
+}
+
+/* 文本类 */
+/* 加粗 */
+.font-bold {
+  font-weight: bold;
+}
+
+/* 无样式 */
+.text-unlink {
+  text-decoration: none;
+}
+
+/* 隐藏 */
+.text-hide {
+  overflow: hidden;
+}
+
+/** 长文本字符串换行默认 **/
+.text-base {
+  overflow-wrap: break-word;
+  word-break: break-all;
+}
+
+/** N行省略 **/
+/** 在fle布局下使用text-line-1，需要在父类增加width:0;的设置**/
+.text-father-flex {
+  width: 0;
+}
+
+.text-line-1 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.text-line-1-type2 {
+  word-break: break-all;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+.text-line-2 {
+  word-break: break-all;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.text-line-3 {
+  word-break: break-all;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.text-line-4 {
+  word-break: break-all;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.text-line-5 {
+  word-break: break-all;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.text-line-6 {
+  word-break: break-all;
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 布局类  */
+.dis-block {
+  display: block;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.h-full {
+  height: 100%;
+}
+
+.w-h-full {
+  width: 100%;
+  height: 100%;
+}
+
+.bg-image-base {
+  background-size: 100% 100%;
+}
+
+
+/* 行高 */
+.font-line {
+  line-height: 1.2em;
+}
+
+.font-height-1 {
+  line-height: 1.2em;
+  height: 1.2em;
+}
+
+.font-height-2 {
+  line-height: 1.2em;
+  height: 2.4em;
+}
+
+.font-height-3 {
+  line-height: 1.2em;
+  height: 3.6em;
+}
+
+.font-height-4 {
+  line-height: 1.2em;
+  height: 4.8em;
+}
+
+/**
+ * 组件基础
+ * 小程序的基础组件为online-block,会导致无法使用外边距
+ */
+.components-base {
+  display: block;
+}
+
+/** 主要用来制作透明button增加事件 **/
+.opacityButton {
+  z-index: 10;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+
+
+imageUrl,image-url{
+	display:inline-block;
+}
