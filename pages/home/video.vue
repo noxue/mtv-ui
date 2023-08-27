@@ -1,7 +1,7 @@
 <template>
 	<view class="content">
 		<swiper :style="'width: '+ windowWidth +'px; height:100vh; background-color: #000;'" class="swiper" circular
-			@change="swiperChange" :current="current" :vertical="true" duration="300">
+			@change="swiperChange" :current="displayIndex" :vertical="true" duration="300">
 
 			<swiper-item v-for="(list, index) in displaySwiperList" :key="index"
 				:style="'width: '+ windowWidth +'px; height:100vh; background-color: #000;'">
@@ -47,15 +47,14 @@
 						</view>
 
 						<!-- 最下侧 -->
-						<view class="contentcd">
+						<view class="contentcd" @click.stop="videoListShow()">
 							<text class="userName" :style="'width: '+ (windowWidth - 90) +'px;'">
 								{{moviesInfo.name || '短剧标题'}}
 							</text>
 							<text class="wordss" :style="'width: '+ (windowWidth - 90) +'px;'">
 								{{moviesInfo.description || '短剧介绍'}}
 							</text>
-							<text class="words" @click.stop="videoListShow()"
-								:style="'width: '+ (windowWidth - 90) +'px;'">{{list.name}}</text>
+							<text class="words" :style="'width: '+ (windowWidth - 90) +'px;'">{{list.name}}</text>
 						</view>
 					</template>
 				</view>
@@ -64,21 +63,23 @@
 
 		<!-- 选集弹窗 -->
 		<u-popup v-model="originListModel" mode="bottom" border-radius="25">
-			<view class="h-700 p-20 flex-column"
-				style="height: 700rpx;background-color: #181a1f;color: #fff;overflow-y: auto;">
+			<view class="h-700 p-20 flex-column" style="background-color: #181a1f;color: #fff;overflow-y: auto;">
 				<view class="flex-row flex-shrink-0">
 					<view class="flex-column">
-						<view class="font-40">我的屌丝生活</view>
-						<view class="font-30" style="color: #999;">更新至XX集</view>
+						<view class="font-40">{{moviesInfo.name}}</view>
+						<view class="font-30" style="color: #999;">更新至{{originList.length}}集</view>
 					</view>
 				</view>
 				<view class="w-full h-20 flex-shrink-0"></view>
 				<scroll-view class="w-full" style="height: calc(700rpx - 92rpx - 20rpx - 40rpx);" :scroll-y="true"
-					:scroll-top="scrollTop">
+					:scroll-into-view="goodsIndex">
 					<view class="video-list">
-						<view class="video-item" @click="" v-for="(item,index) in 100" :key="index">
-							{{index}}
-							<view class="pay-lock"></view>
+						<view class="video-item" v-for="(item,index) in originList" :key="index" @click="vidoeWitch(index)"
+							:id="'goods_' + index">
+							{{index + 1}}
+							<view class="pay-lock" v-if="item.price > 0">
+								<image class="w-h-full" src="@/static/lock.png"></image>
+							</view>
 						</view>
 					</view>
 				</scroll-view>
@@ -143,7 +144,7 @@
 					show: false,
 					data: []
 				},
-				scrollTop: 0, // 视频滑动位置
+				goodsIndex: 'goods_1', // 视频滑动位置
 				safeArea: 0, // 安全区配置
 				heightxw: 100, // 安全区配置
 			};
@@ -201,6 +202,7 @@
 					url: this.$hostConfig.apiHost + '/' + 'movies/' + 1
 				}).then((data) => {
 					this.moviesInfo = data;
+					this.setStorage();
 				})
 			},
 			// 获取视频列表
@@ -240,31 +242,38 @@
 			// 显示选集界面
 			videoListShow() {
 				this.originListModel = true;
-
-				// TODO 计算滑动位置
-				// this.scrollTop = '';
+				this.$nextTick(() => {
+					this.goodsIndex = 'goods_' + this.originIndex;
+				})
 			},
 			// 视频信息
 			tapVides() {
 				this.showTab = !this.showTab
 			},
 			// 切换视频
-			vidoeWwitch(index, pays) {
+			vidoeWitch(index) {
 				this.originIndex = index
-				this.initSwiperData(index);
+				this.swiperInit(index);
+
+				this.originListModel = false;
 			},
 			// 视频结束
 			videoEnd() {
 				// 自动切换下一个视频
 				if (this.isPlay) {
+					let current;
 					if (this.displayIndex < 2) {
-						this.current = this.displayIndex + 1
+						current = this.displayIndex + 1
 					} else {
-						this.current = 0
+						current = 0
 					}
 
-					this.showTab = true
-					console.log('显示swiper Index:', this.displayIndex)
+					this.swiperChange({
+						detail: {
+							current: current
+						}
+					})
+					console.log('显示swiper Index:', current)
 				}
 			},
 			/**
@@ -347,12 +356,10 @@
 
 				// 对当前视频处理
 				let info = this.originList[this.originIndex];
+
 				// 缓存当前已经看过的视频
-				uni.setStorageSync('watch', {
-					cover: this.moviesInfo.cover,
-					moviesId: this.moviesId,
-					videosId: info.id
-				})
+				this.setStorage();
+
 				if (info.videosInfo) {
 					setTimeout(() => {
 						this.videoPlay();
@@ -408,6 +415,15 @@
 			// 追剧点击
 			followedClick() {
 
+			},
+			setStorage() {
+				let info = this.originList[this.originIndex];
+
+				uni.setStorageSync('watch', {
+					cover: this.moviesInfo.cover,
+					moviesId: this.moviesId,
+					videosId: info.id
+				})
 			}
 		},
 
@@ -514,11 +530,11 @@
 	}
 
 	.contentcd {
-		width: 720rpx;
 		z-index: 99;
 		position: absolute;
-		bottom: 70rpx;
+		bottom: 100rpx;
 		padding: 15rpx;
+		width: 720rpx;
 		display: flex;
 		flex-direction: column;
 		justify-content: flex-start;
@@ -526,10 +542,9 @@
 	}
 
 	.userName {
+		margin-top: 80upx;
 		font-size: 30rpx;
 		color: #ffffff;
-		margin-top: 80upx;
-		margin-left: -12rpx;
 	}
 
 	.words {
@@ -617,7 +632,6 @@
 				left: 0;
 				width: 30rpx;
 				height: 30rpx;
-				background-color: red;
 			}
 
 			&.select {

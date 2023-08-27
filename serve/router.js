@@ -2,9 +2,9 @@
  * 简易路由系统
  ************************/
 import userServe from '@/serve/userServe.js'
-import {
-	objectToParams
-} from '@/function/url.js'
+// import {
+// 	objectToParams
+// } from '@/function/url.js'
 
 // tab页列表,要与pages.json一致,用来做toPage验证
 export const tabPageList = [
@@ -72,8 +72,7 @@ export function toPage(url, data, type = 'navigateTo', config) {
 	if (tabPageList.indexOf(url) > -1) type = 'switchTab';
 
 	// 配置参数
-	if (data) url += objectToParams(data)
-
+	if (data) url += '?' + objectToParams(data)
 	switch (type) {
 		case 'switchTab':
 			uni.switchTab({
@@ -241,4 +240,25 @@ module.exports = {
 	toRegister,
 	toError,
 	getUpPage,
+}
+
+
+function objectToParams(obj) {
+	const params = [];
+
+	for (let key in obj) {
+		if (obj.hasOwnProperty(key)) {
+			const value = obj[key];
+			// 若值为数组，则拼接多个参数
+			if (Array.isArray(value)) {
+				value.forEach(val => {
+					params.push(`${encodeURIComponent(key)}=${encodeURIComponent(val)}`);
+				});
+			} else {
+				params.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
+			}
+		}
+	}
+
+	return params.join('&');
 }

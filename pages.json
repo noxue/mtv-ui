@@ -78,17 +78,17 @@
 		"backgroundColor": "#FFF",
 		"borderStyle": "black",
 		"color": "#616161",
-		"selectedColor": "#0052D9",
+		"selectedColor": "#feb016",
 		"list": [{
 			"pagePath": "pages/home/home",
 			"text": "小剧场",
-			"iconPath": "static/logo.png",
-			"selectedIconPath": "static/logo.png"
+			"iconPath": "static/icon/yzy_xjc.png",
+			"selectedIconPath": "static/icon/yzy_xjcs.png"
 		}, {
 			"pagePath": "pages/my/my",
 			"text": "我的",
-			"iconPath": "static/logo.png",
-			"selectedIconPath": "static/logo.png"
+			"iconPath": "static/icon/yzy_wds.png",
+			"selectedIconPath": "static/icon/yzy_wds.png"
 		}]
 	},
 	"uniIdRouter": {}

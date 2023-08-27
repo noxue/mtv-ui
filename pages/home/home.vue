@@ -3,23 +3,23 @@
 		<!-- 顶部导航 -->
 		<view class="tab-list flex-row-between-center" style="justify-content:space-evenly;">
 			<view class="tab-item" @click="$wxRouter.toPage('/pages/home/hotList')">
-				<image class="w-h-80" src="@/static/logo.png"></image>
+				<image class="w-h-80" src="@/static/home-hot.png"></image>
 				<view class="tab-text">热门</view>
 			</view>
 			<view class="tab-item" @click="$wxRouter.toPage('/pages/home/hotList')">
-				<image class="w-h-80" src="@/static/logo.png"></image>
+				<image class="w-h-80" src="@/static/home-new.png"></image>
 				<view class="tab-text">最新</view>
 			</view>
 			<view class="tab-item" @click="$wxRouter.toPage('/pages/home/newList')">
-				<image class="w-h-80" src="@/static/logo.png"></image>
+				<image class="w-h-80" src="@/static/home-tuijian.png"></image>
 				<view class="tab-text">推荐</view>
 			</view>
 		</view>
 
 		<!-- 视频列表 -->
 		<view class="video-list m-t-25 flex-row-between-center flex-wrap">
-			<view v-for="(item,index) in pageList.data" :key="index" @click="$wxRouter.toPage('/pages/home/video?mid=' + item.id)"
-				class="video-item">
+			<view v-for="(item,index) in pageList.data" :key="index"
+				@click="$wxRouter.toPage('/pages/home/video?mid=' + item.id)" class="video-item">
 				<imageUrl class="w-345 h-540" :src="item.cover"></imageUrl>
 				<view class="flex-row-start-center p-lr-20 h-70">
 					<view v-if="item.is_hot" class="hot">热门</view>
@@ -30,8 +30,12 @@
 		<pageList :pageList="pageList"></pageList>
 
 		<!-- 继续观看 -->
-		<view class="continueWatch">
-			<!-- <image class="w-h-full" src="../../static/logo.png"></image> -->
+		<view v-if="continueWatch" class="continueWatch"
+			:class="{'anim-close':continueWatchShow == false,'anim-open':continueWatchShow == true}" @click="toContinueWatch">
+			<image class="w-h-full" style="position: absolute;left: 0;top: 0;z-index: 2;"
+				src="../../static/home-jixuguankan.png"></image>
+			<imageUrl class="w-h-full bR-30" style="position: absolute;left: 0;top: 0;z-index: 1;overflow: hidden;"
+				:src="continueWatch.cover"></imageUrl>
 		</view>
 	</view>
 </template>
@@ -42,15 +46,25 @@
 	export default {
 		mixins: [pageList],
 		data() {
-			return {}
+			return {
+				continueWatch: null,
+				continueWatchShow: true,
+			}
 		},
 		onLoad() {
 			console.log(this)
 		},
-		onReady() {},
+		onReady() {
+			this.continueWatch = uni.getStorageSync('watch');
+		},
 		onPullDownRefresh() {},
 		onReachBottom() {
 
+		},
+		onPageScroll(e) {
+			if (e.scrollTop > 250) {
+				this.continueWatchShow = false;
+			}
 		},
 		methods: {
 			pageListDataPageRequest() {
@@ -59,6 +73,15 @@
 						console.log('获取数据', data)
 						r(data.data)
 					})
+				})
+			},
+			continueWatchChange() {
+				this.continueWatchShow = !this.continueWatchShow
+			},
+			toContinueWatch() {
+				this.$wxRouter.toPage('/pages/home/video', {
+					moviesId: this.continueWatch.moviesId,
+					videosId: this.continueWatch.videosId,
 				})
 			}
 		}
@@ -129,8 +152,17 @@
 			left: 0rpx;
 			width: 180rpx;
 			height: 270rpx;
-			border-radius: 10rpx;
-			background-color: red;
+			// border-radius: 30rpx;
+			overflow: hidden;
+			transition-duration: 1s;
+
+			&.anim-close {
+				transform: translateX(-150rpx);
+			}
+
+			&.anim-open {
+				transform: translateX(0rpx);
+			}
 		}
 	}
 </style>
