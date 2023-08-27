@@ -1,16 +1,17 @@
 <template>
 	<view class="content">
-		<swiper :style="'width: '+ windowWidth +'px; height:100vh; background-color: #000;'" class="swiper" :circular="false"
+		<swiper :style="'width: '+ windowWidth +'px; height:100vh; background-color: #000;'" class="swiper" circular
 			@change="swiperChange" :current="displayIndex" :vertical="true" duration="300">
 
 			<swiper-item v-for="(list, index) in displaySwiperList" :key="index"
 				:style="'width: '+ windowWidth +'px; height:100vh; background-color: #000;'">
 				<view :style="'width: '+ windowWidth +'px; height:'+heightxw+'vh;'">
 					<!-- 视频 -->
-					<video :id="'video_' + index" :controls="true" :loop="false" :enable-progress-gesture="false"
+					<video v-if="index == displayIndex" :id="'video_' + index" :controls="true" :loop="false" :enable-progress-gesture="false"
 						:show-center-play-btn="true" :show-loading="true" :show-fullscreen-btn="false" @ended="videoEnd"
-						@click="tapVides()" :poster="'https://mtv.static.noxue.com/' +  moviesInfo.cover" :poster-for-crawler="'https://mtv.static.noxue.com/' +  moviesInfo.cover"
-						:style="'width: '+ windowWidth +'px; height:'+heightxw+'vh;'" :src="list.videosInfo.video"  class="tsvideo">
+						@click="tapVides()" :poster="'https://mtv.static.noxue.com/' +  moviesInfo.cover"
+						:poster-for-crawler="'https://mtv.static.noxue.com/' +  moviesInfo.cover"
+						:style="'width: '+ windowWidth +'px; height:'+heightxw+'vh;'" :src="list.videosInfo.video" class="tsvideo">
 					</video>
 
 					<!-- 视频不存在的时候弹出 -->
@@ -361,7 +362,9 @@
 
 				if (info.videosInfo) {
 					setTimeout(() => {
-						this.videoPlay();
+						this.$nextTick(() => {
+							this.videoPlay();
+						})
 					}, 100)
 				} else {
 					// 向后台请求数据
@@ -369,10 +372,10 @@
 						url: this.$hostConfig.apiHost + '/movies/videos/' + info.id
 					}).then(data => {
 						console.log('-----视频详情', data)
-						// info.playStatus = 10;
-						// this.rechargeChange(true);
 						info.videosInfo = data;
-						this.videoPlay();
+						this.$nextTick(() => {
+							this.videoPlay();
+						})
 					}, err => {
 						info.playStatus = 10;
 						this.rechargeChange();
@@ -418,11 +421,13 @@
 			setStorage() {
 				let info = this.originList[this.originIndex];
 
-				uni.setStorageSync('watch', {
-					cover: this.moviesInfo.cover,
-					moviesId: this.moviesId,
-					videosId: info.id
-				})
+				if (this.moviesInfo && info) {
+					uni.setStorageSync('watch', {
+						cover: this.moviesInfo.cover,
+						moviesId: this.moviesId,
+						videosId: info.id
+					})
+				}
 			}
 		},
 
