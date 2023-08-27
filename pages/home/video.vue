@@ -10,7 +10,7 @@
 					<video v-if="index == displayIndex" :id="'video_' + index" :controls="true" :loop="false"
 						:enable-progress-gesture="false" :show-center-play-btn="false" :show-loading="false"
 						:show-fullscreen-btn="false" @ended="videoEnd" @click="tapVides()"
-						:style="'width: '+ windowWidth +'px; height:'+heightxw+'vh;'"
+						:style="'width: '+ windowWidth +'px; height:'+heightxw+'vh;'" :autoplay="true"
 						:src="list.videosInfo && list.videosInfo.video" class="tsvideo">
 					</video>
 					<template v-else>
@@ -58,7 +58,9 @@
 							<text class="wordss" :style="'width: '+ (windowWidth - 90) +'px;'">
 								{{moviesInfo.description || '短剧介绍'}}
 							</text>
-							<text class="words" :style="'width: '+ (windowWidth - 90) +'px;'">{{list.name}} 共{{originList.length}}集 选集></text>
+							<text class="words" :style="'width: '+ (windowWidth - 90) +'px;'">
+								{{list.name}} 共{{originList.length}}集 选集>
+							</text>
 						</view>
 					</template>
 				</view>
@@ -97,7 +99,7 @@
 				<view class="p-lr-36">
 					<view class="flex-row-between-center m-t-20">
 						<view>
-							<view>解锁本集:{{originList[originIndex].price}}金币</view>
+							<view>解锁本集:{{originList[originIndex] && originList[originIndex].price}}金币</view>
 							<view>账号余额:0金币</view>
 						</view>
 						<view class="weChatPay-button">
@@ -256,7 +258,15 @@
 				// #ifdef H5
 				if (this.isH5 == false) {
 					this.isH5 = true;
-					this.videoPlay();
+					// this.videoPlay();
+
+					this.rechargeChange(false);
+
+					let info = this.originList[this.originIndex];
+					info.playStatus = 5;
+					setTimeout(() => {
+						uni.createVideoContext('video_' + this.displayIndex, this).play();
+					}, 100)
 				} else {
 					this.showTab = !this.showTab
 				}
@@ -403,7 +413,8 @@
 				let info = this.originList[this.originIndex];
 				info.playStatus = 5;
 				setTimeout(() => {
-					uni.createVideoContext('video_' + this.displayIndex, this).play();
+					// 开了自动播放，所以这里没有用了
+					// uni.createVideoContext('video_' + this.displayIndex, this).play();
 				}, 100)
 			},
 			// 打开/关闭充值
