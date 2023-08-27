@@ -8,10 +8,10 @@
 				<view :style="'width: '+ windowWidth +'px; height:'+heightxw+'vh;'">
 					<!-- 视频 -->
 					<video v-if="index == displayIndex" :id="'video_' + index" :controls="true" :loop="false"
-						:enable-progress-gesture="false" :show-center-play-btn="true" :show-loading="true"
+						:enable-progress-gesture="false" :show-center-play-btn="false" :show-loading="false"
 						:show-fullscreen-btn="false" @ended="videoEnd" @click="tapVides()"
-						:poster="'https://mtv.static.noxue.com/' +  moviesInfo.cover"
-						:style="'width: '+ windowWidth +'px; height:'+heightxw+'vh;'" :src="list.videosInfo.video" class="tsvideo">
+						:style="'width: '+ windowWidth +'px; height:'+heightxw+'vh;'"
+						:src="list.videosInfo && list.videosInfo.video" class="tsvideo">
 					</video>
 					<template v-else>
 						<image class="w-h-full" :src="'https://mtv.static.noxue.com/' +  moviesInfo.cover"></image>
@@ -32,7 +32,7 @@
 						<view class="userInfo">
 							<!-- 点赞 -->
 							<view @click.stop="linkClick" class="flex-column-center-center" style="opacity: 0.9; margin-top: 17px;">
-								<image v-if="list.videosInfo.is_liked == true" src="@/static/aixinRed.png"
+								<image v-if="list.videosInfo && list.videosInfo.is_liked == true" src="@/static/aixinRed.png"
 									style="width: 60rpx; height: 50rpx;"></image>
 								<image v-else src="@/static/aixin.png" style="width: 60rpx; height: 50rpx;">
 								</image>
@@ -42,7 +42,8 @@
 							<!-- 追剧 -->
 							<view @click.stop="followedClick" class="flex-column-center-center"
 								style="opacity: 0.9; margin-top: 17px;">
-								<image v-if="list.videosInfo.is_followed == true" src="@/static/zhuiJu-select.png" class="w-h-60">
+								<image v-if="list.videosInfo && list.videosInfo.is_followed == true" src="@/static/zhuiJu-select.png"
+									class="w-h-60">
 								</image>
 								<image v-else src="@/static/zhuiJu-noSelect.png" class="w-h-60">
 								</image>
@@ -150,6 +151,7 @@
 				goodsIndex: 'goods_1', // 视频滑动位置
 				safeArea: 0, // 安全区配置
 				heightxw: 100, // 安全区配置
+				isH5: 0
 			};
 		},
 		onLoad(e) {
@@ -251,7 +253,17 @@
 			},
 			// 视频信息
 			tapVides() {
+				// #ifdef H5
+				if (this.isH5 == false) {
+					this.isH5 = true;
+					this.videoPlay();
+				} else {
+					this.showTab = !this.showTab
+				}
+				// #endif
+				// #ifndef H5
 				this.showTab = !this.showTab
+				// #endif
 			},
 			// 切换视频
 			vidoeWitch(index) {
