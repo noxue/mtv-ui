@@ -1,17 +1,16 @@
 <template>
 	<view class="content">
-		<swiper :style="'width: '+ windowWidth +'px; height:100vh; background-color: #000;'" class="swiper" circular
+		<swiper :style="'width: '+ windowWidth +'px; height:100vh; background-color: #000;'" class="swiper" :circular="false"
 			@change="swiperChange" :current="displayIndex" :vertical="true" duration="300">
 
 			<swiper-item v-for="(list, index) in displaySwiperList" :key="index"
 				:style="'width: '+ windowWidth +'px; height:100vh; background-color: #000;'">
 				<view :style="'width: '+ windowWidth +'px; height:'+heightxw+'vh;'">
 					<!-- 视频 -->
-					<video v-if="index == displayIndex" :id="'video_' + index" :controls="true" :loop="false"
-						:enable-progress-gesture="false" :show-center-play-btn="true" :show-loading="true"
-						:show-fullscreen-btn="false" @ended="videoEnd" @click="tapVides()"
-						:style="'width: '+ windowWidth +'px; height:'+heightxw+'vh;'" :src="list.videosInfo.video"
-						:poster="list.img" class="tsvideo">
+					<video :id="'video_' + index" :controls="true" :loop="false" :enable-progress-gesture="false"
+						:show-center-play-btn="true" :show-loading="true" :show-fullscreen-btn="false" @ended="videoEnd"
+						@click="tapVides()" :poster="'https://mtv.static.noxue.com/' +  moviesInfo.cover" :poster-for-crawler="'https://mtv.static.noxue.com/' +  moviesInfo.cover"
+						:style="'width: '+ windowWidth +'px; height:'+heightxw+'vh;'" :src="list.videosInfo.video"  class="tsvideo">
 					</video>
 
 					<!-- 视频不存在的时候弹出 -->
@@ -54,7 +53,7 @@
 							<text class="wordss" :style="'width: '+ (windowWidth - 90) +'px;'">
 								{{moviesInfo.description || '短剧介绍'}}
 							</text>
-							<text class="words" :style="'width: '+ (windowWidth - 90) +'px;'">{{list.name}}</text>
+							<text class="words" :style="'width: '+ (windowWidth - 90) +'px;'">{{list.name}} 选集></text>
 						</view>
 					</template>
 				</view>
@@ -67,11 +66,11 @@
 				<view class="flex-row flex-shrink-0">
 					<view class="flex-column">
 						<view class="font-40">{{moviesInfo.name}}</view>
-						<view class="font-30" style="color: #999;">更新至{{originList.length}}集</view>
+						<view class="font-30 m-t-10" style="color: #999;">更新至{{originList.length}}集</view>
 					</view>
 				</view>
 				<view class="w-full h-20 flex-shrink-0"></view>
-				<scroll-view class="w-full" style="height: calc(700rpx - 92rpx - 20rpx - 40rpx);" :scroll-y="true"
+				<scroll-view class="w-full" style="height: calc(700rpx - 92rpx - 10rpx - 20rpx - 40rpx);" :scroll-y="true"
 					:scroll-into-view="goodsIndex">
 					<view class="video-list">
 						<view class="video-item" v-for="(item,index) in originList" :key="index" @click="vidoeWitch(index)"
