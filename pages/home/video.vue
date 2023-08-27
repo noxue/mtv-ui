@@ -58,7 +58,7 @@
 							<text class="wordss" :style="'width: '+ (windowWidth - 90) +'px;'">
 								{{moviesInfo.description || '短剧介绍'}}
 							</text>
-							<text class="words" :style="'width: '+ (windowWidth - 90) +'px;'">{{list.name}} 选集></text>
+							<text class="words" :style="'width: '+ (windowWidth - 90) +'px;'">{{list.name}} 共{{originList.length}}集 选集></text>
 						</view>
 					</template>
 				</view>
