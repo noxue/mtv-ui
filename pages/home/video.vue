@@ -414,7 +414,7 @@
 				info.playStatus = 5;
 				setTimeout(() => {
 					// 开了自动播放，所以这里没有用了
-					// uni.createVideoContext('video_' + this.displayIndex, this).play();
+					uni.createVideoContext('video_' + this.displayIndex, this).play();
 				}, 100)
 			},
 			// 打开/关闭充值
