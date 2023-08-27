@@ -7,12 +7,15 @@
 				:style="'width: '+ windowWidth +'px; height:100vh; background-color: #000;'">
 				<view :style="'width: '+ windowWidth +'px; height:'+heightxw+'vh;'">
 					<!-- 视频 -->
-					<video v-if="index == displayIndex" :id="'video_' + index" :controls="true" :loop="false" :enable-progress-gesture="false"
-						:show-center-play-btn="true" :show-loading="true" :show-fullscreen-btn="false" @ended="videoEnd"
-						@click="tapVides()" :poster="'https://mtv.static.noxue.com/' +  moviesInfo.cover"
-						:poster-for-crawler="'https://mtv.static.noxue.com/' +  moviesInfo.cover"
+					<video v-if="index == displayIndex" :id="'video_' + index" :controls="true" :loop="false"
+						:enable-progress-gesture="false" :show-center-play-btn="true" :show-loading="true"
+						:show-fullscreen-btn="false" @ended="videoEnd" @click="tapVides()"
+						:poster="'https://mtv.static.noxue.com/' +  moviesInfo.cover"
 						:style="'width: '+ windowWidth +'px; height:'+heightxw+'vh;'" :src="list.videosInfo.video" class="tsvideo">
 					</video>
+					<template v-else>
+						<image class="w-h-full" :src="'https://mtv.static.noxue.com/' +  moviesInfo.cover"></image>
+					</template>
 
 					<!-- 视频不存在的时候弹出 -->
 					<view v-if="index == displayIndex && !list.videosInfo" class="videoHover tsimg" @click.stop="rechargeChange"
