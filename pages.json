@@ -66,6 +66,14 @@
 			"style": {
 				"navigationBarTitleText": "充值列表"
 			}
+		}, {
+			"path": "pages/nvueSwiper/nvueSwiper",
+			"style": {
+				"app-plus": {
+					"titleNView": false,
+					"bounce": "none"
+				}
+			}
 		}
 	],
 	"globalStyle": {

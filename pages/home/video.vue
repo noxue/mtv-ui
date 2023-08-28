@@ -6,16 +6,12 @@
 			<swiper-item v-for="(list, index) in displaySwiperList" :key="index"
 				:style="'width: '+ windowWidth +'px; height:100vh; background-color: #000;'">
 				<view :style="'width: '+ windowWidth +'px; height:'+heightxw+'vh;'">
-					<!-- 视频 -->
-					<video v-if="index == displayIndex" :id="'video_' + index" :controls="true" :loop="false"
-						:enable-progress-gesture="false" :show-center-play-btn="false" :show-loading="false"
-						:show-fullscreen-btn="false" @ended="videoEnd" @click="tapVides()"
-						:style="'width: '+ windowWidth +'px; height:'+heightxw+'vh;'" :autoplay="true"
+					<!-- 视频  v-if="index == displayIndex"-->
+					<video :id="'video_' + index" :controls="true" :loop="false" :enable-progress-gesture="false"
+						:show-center-play-btn="false" :show-loading="false" :show-fullscreen-btn="false" @ended="videoEnd"
+						@click="tapVides()" :style="'width: '+ windowWidth +'px; height:'+heightxw+'vh;'" :autoplay="true"
 						:src="list.videosInfo && list.videosInfo.video" class="tsvideo">
 					</video>
-					<template v-else>
-						<image class="w-h-full" :src="'https://mtv.static.noxue.com/' +  moviesInfo.cover"></image>
-					</template>
 
 					<!-- 视频不存在的时候弹出 -->
 					<view v-if="index == displayIndex && !list.videosInfo" class="videoHover tsimg" @click.stop="rechargeChange"
@@ -128,6 +124,9 @@
 </template>
 
 <script>
+	let audo = uni.createInnerAudioContext()
+	audo.loop = true
+
 	export default {
 		data() {
 			return {
@@ -371,6 +370,7 @@
 
 				// 旧的视频进行暂停
 				let oldInfo = this.originList[this.originOldIndex];
+
 				// #ifdef MP-WEIXIN
 				uni.createVideoContext('video_' + this.displayOldIndex, this).stop(); // 微信小程序
 				// #endif
@@ -378,10 +378,10 @@
 				uni.createVideoContext('video_' + this.displayOldIndex, this).pause(); // 其他平台
 				// #endif
 				oldInfo.playStatus = 0;
+				audo.pause()
 
 				// 对当前视频处理
 				let info = this.originList[this.originIndex];
-
 				// 缓存当前已经看过的视频
 				this.setStorage();
 
@@ -412,7 +412,10 @@
 
 				let info = this.originList[this.originIndex];
 				info.playStatus = 5;
+
+				audo.src = info.videosInfo.video;
 				setTimeout(() => {
+					audo.play()
 					// 开了自动播放，所以这里没有用了
 					uni.createVideoContext('video_' + this.displayIndex, this).play();
 				}, 100)
