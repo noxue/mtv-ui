@@ -19,7 +19,7 @@
 		<!-- 视频列表 -->
 		<view class="video-list m-t-25 flex-row-between-center flex-wrap">
 			<view v-for="(item,index) in pageList.data" :key="index"
-				@click="$wxRouter.toPage('/pages/nvueSwiper/nvueSwiper?moviesId=' + item.id)" class="video-item">
+				@click="$wxRouter.toPage('/pages/home/video?mid=' + item.id)" class="video-item">
 				<imageUrl class="w-345 h-540" :src="item.cover"></imageUrl>
 				<view class="flex-row-start-center p-lr-20 h-70">
 					<view v-if="item.is_hot" class="hot">热门</view>
@@ -29,8 +29,8 @@
 		</view>
 		<pageList :pageList="pageList"></pageList>
 
-		<!-- 继续观看 v-if="continueWatch" -->
-		<view  class="continueWatch"
+		<!-- 继续观看 -->
+		<view v-if="continueWatch" class="continueWatch"
 			:class="{'anim-close':continueWatchShow == false,'anim-open':continueWatchShow == true}" @click="toContinueWatch">
 			<image class="w-h-full" style="position: absolute;left: 0;top: 0;z-index: 2;"
 				src="../../static/home-jixuguankan.png"></image>
@@ -79,14 +79,9 @@
 				this.continueWatchShow = !this.continueWatchShow
 			},
 			toContinueWatch() {
-				// this.$wxRouter.toPage('/pages/home/video', {
-				// 	moviesId: this.continueWatch.moviesId,
-				// 	videosId: this.continueWatch.videosId,
-				// })
-
-				this.$wxRouter.toPage('/pages/nvueSwiper/nvueSwiper', {
-					moviesId: 1,
-					videosId: 5,
+				this.$wxRouter.toPage('/pages/home/video', {
+					moviesId: this.continueWatch.moviesId,
+					videosId: this.continueWatch.videosId,
 				})
 			}
 		}

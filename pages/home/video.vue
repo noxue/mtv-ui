@@ -8,7 +8,7 @@
 				<view :style="'width: '+ windowWidth +'px; height:'+heightxw+'vh;'">
 					<!-- 视频  v-if="index == displayIndex"-->
 					<video :id="'video_' + index" :controls="true" :loop="false" :enable-progress-gesture="false"
-						:show-center-play-btn="false" :show-loading="false" :show-fullscreen-btn="false" @ended="videoEnd"
+						:show-center-play-btn="true" :show-loading="true" :show-fullscreen-btn="false" @ended="videoEnd"
 						@click="tapVides()" :style="'width: '+ windowWidth +'px; height:'+heightxw+'vh;'" :autoplay="true"
 						:src="list.videosInfo && list.videosInfo.video" class="tsvideo">
 					</video>
@@ -124,9 +124,6 @@
 </template>
 
 <script>
-	let audo = uni.createInnerAudioContext()
-	audo.loop = true
-
 	export default {
 		data() {
 			return {
@@ -378,7 +375,6 @@
 				uni.createVideoContext('video_' + this.displayOldIndex, this).pause(); // 其他平台
 				// #endif
 				oldInfo.playStatus = 0;
-				audo.pause()
 
 				// 对当前视频处理
 				let info = this.originList[this.originIndex];
@@ -413,11 +409,17 @@
 				let info = this.originList[this.originIndex];
 				info.playStatus = 5;
 
-				audo.src = info.videosInfo.video;
 				setTimeout(() => {
-					audo.play()
 					// 开了自动播放，所以这里没有用了
-					uni.createVideoContext('video_' + this.displayIndex, this).play();
+					if (typeof WeixinJSBridge == "undefined") {
+						uni.createVideoContext('video_' + this.displayIndex, this).seek(0)
+						uni.createVideoContext('video_' + this.displayIndex, this).play();
+					} else {
+						WeixinJSBridge.invoke('getNetworkType', {}, e => {
+							uni.createVideoContext('video_' + this.displayIndex, this).seek(0)
+							uni.createVideoContext('video_' + this.displayIndex, this).play();
+						})
+					}
 				}, 100)
 			},
 			// 打开/关闭充值

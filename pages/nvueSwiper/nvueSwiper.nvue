@@ -25,9 +25,9 @@
 						1.这里是封面（方案二）：这里的封面可以自定义。
 						2.也在代码中做了批注，两种方案可以共存，不会相互影响。
 						-->
-						<image v-if="!list.playIng" :src="list.src+'?x-oss-process=video/snapshot,t_100,f_jpg'"
+					<!-- 	<image v-if="!list.playIng" :src="list.src+'?x-oss-process=video/snapshot,t_100,f_jpg'"
 							:style="'width: '+ windowWidth +'px; height: '+ windowHeight +'px; position: absolute;'" mode="aspectFit">
-						</image>
+						</image> -->
 					</view>
 					<!-- 播放状态：pause 的时候就会暂停 -->
 					<view class="videoHover" @click="tapVideoHover(list.state,$event)"
@@ -95,7 +95,7 @@
 		<swiper :style="'width: '+ windowWidth +'px; height: '+ windowHeight +'px; background-color: #000000;'"
 			:vertical="true" @animationfinish="animationfinish" @change="change" :current="current" :indicator-dots="false"
 			:duration="duration">
-			<swiper-item v-for="(list,index) in dataList" :key="index">
+			<swiper-item v-for="(list,index) in dataList" :key="index" v-if="index < 10">
 				<view v-if="Math.abs(k-index)<=1">
 					<view>
 						<!-- 
@@ -201,7 +201,7 @@
 	export default {
 		data() {
 			return {
-				moviesInfo:{},
+				moviesInfo: {},
 				windowWidth: 0,
 				windowHeight: 0,
 				platform: "",
@@ -448,6 +448,7 @@
 					this.dataList[this.k].state = 'continue';
 				}
 				if (this.dataList[this.k].state == 'continue') {
+					console.log('进来了----')
 					this.isClick = true;
 					this.dataList[this.k].playIng = true
 					uni.createVideoContext(this.dataList[this.k]._id + '' + this.k, this).play(); //暂停以后继续播放
@@ -629,30 +630,34 @@
 				// #ifdef H5
 				this.dataList[k].isplay = true
 				audo.src = this.dataList[k].src
+				console.log('这里奇', this.isClick);
 				if (this.isClick) {
 					setTimeout(() => {
+						console.log('这里奇', 200);
 						if (typeof WeixinJSBridge == "undefined") {
 							setTimeout(() => {
+								console.log('这里奇', 500);
 								audo.play()
 								uni.createVideoContext(this.dataList[k]._id + '' + k, this).seek(0)
 								uni.createVideoContext(this.dataList[k]._id + '' + k, this).play()
 								setTimeout(() => {
 									this.dataList[k].playIng = true
-								}, 650)
-							}, 500)
+								}, 100)
+							}, 100)
 						} else {
 							WeixinJSBridge.invoke('getNetworkType', {}, e => {
 								setTimeout(() => {
+									console.log('这里奇', 200);
 									audo.play()
 									uni.createVideoContext(this.dataList[k]._id + '' + k, this).seek(0)
 									uni.createVideoContext(this.dataList[k]._id + '' + k, this).play()
 									setTimeout(() => {
 										this.dataList[k].playIng = true
-									}, 850)
-								}, 200)
+									}, 100)
+								}, 100)
 							})
 						}
-					}, 200)
+					}, 100)
 				} else {
 					audo.pause()
 					this.dataList[k].state = 'pause'
