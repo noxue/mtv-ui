@@ -14,11 +14,13 @@ function userWxLogin() {
 
 					let {
 						token,
-						regist, // 是否注册
+						regist,
+						openid, // 是否注册
 					} = data
 
 					userServe.createUserInfo({
 						token,
+						openid,
 						regist // 是否注册
 					})
 

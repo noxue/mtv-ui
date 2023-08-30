@@ -1,4 +1,4 @@
-<template>
+'<template>
 	<view class="content">
 		<swiper :style="'width: '+ windowWidth +'px; height:100vh; background-color: #000;'" class="swiper" circular
 			@change="swiperChange" :current="displayIndex" :vertical="true" duration="300">
@@ -6,10 +6,12 @@
 			<swiper-item v-for="(list, index) in displaySwiperList" :key="index"
 				:style="'width: '+ windowWidth +'px; height:100vh; background-color: #000;'">
 				<view :style="'width: '+ windowWidth +'px; height:'+heightxw+'vh;'">
+
 					<!-- 视频  v-if="index == displayIndex"-->
 					<video :id="'video_' + index" :controls="true" :loop="false" :enable-progress-gesture="false"
 						:show-center-play-btn="true" :show-loading="true" :show-fullscreen-btn="false" @ended="videoEnd"
-						@click="tapVides()" :style="'width: '+ windowWidth +'px; height:'+heightxw+'vh;'" :autoplay="true"
+						@click="tapVides()" @pause="playStatusChange(0)" @play="playStatusChange(1)"
+						:style="'width: '+ windowWidth +'px; height:'+heightxw+'vh;'" :autoplay="true"
 						:src="list.videosInfo && list.videosInfo.video" class="tsvideo">
 					</video>
 
@@ -139,7 +141,7 @@
 				displayIndex: 0, // 用于显示swiper的真正的下标数值只有：0，1，2。
 				displayOldIndex: -1, // 上一个直播的视频
 				windowWidth: 0,
-				isPlay: true, //是否自动播放下一个视频
+				isAutoPaly: true, // 是否自动播放下一个视频
 				nodate: true, //true 有数据 
 				showTab: true,
 				rechargeModel: { // 充值相关东西
@@ -149,6 +151,7 @@
 				goodsIndex: 'goods_1', // 视频滑动位置
 				safeArea: 0, // 安全区配置
 				heightxw: 100, // 安全区配置
+				playStatus: 0, // 播放状态
 				isH5: 0
 			};
 		},
@@ -220,7 +223,6 @@
 					if (list.length > 0) {
 						for (let i = 0; i < list.length; i++) {
 							list[i]._id = 'video_' + list[i].id;
-							list[i].playStatus = 0; // 0 等待  5可以播放 10需要付费
 							list[i].videosInfo = null;
 							this.originList.push(list[i])
 						}
@@ -251,25 +253,35 @@
 			},
 			// 视频信息
 			tapVides() {
-				// #ifdef H5
-				if (this.isH5 == false) {
-					this.isH5 = true;
-					// this.videoPlay();
-
+				if (this.playStatus == 0) {
 					this.rechargeChange(false);
 
 					let info = this.originList[this.originIndex];
-					info.playStatus = 5;
 					setTimeout(() => {
 						uni.createVideoContext('video_' + this.displayIndex, this).play();
 					}, 100)
 				} else {
 					this.showTab = !this.showTab
 				}
-				// #endif
-				// #ifndef H5
-				this.showTab = !this.showTab
-				// #endif
+
+				// // #ifdef H5
+				// if (this.isH5 == false) {
+				// 	this.isH5 = true;
+				// 	// this.videoPlay();
+
+				// 	this.rechargeChange(false);
+
+				// 	let info = this.originList[this.originIndex];
+				// 	setTimeout(() => {
+				// 		uni.createVideoContext('video_' + this.displayIndex, this).play();
+				// 	}, 100)
+				// } else {
+				// 	this.showTab = !this.showTab
+				// }
+				// // #endif
+				// // #ifndef H5
+				// this.showTab = !this.showTab
+				// // #endif
 			},
 			// 切换视频
 			vidoeWitch(index) {
@@ -281,7 +293,7 @@
 			// 视频结束
 			videoEnd() {
 				// 自动切换下一个视频
-				if (this.isPlay) {
+				if (this.isAutoPaly) {
 					let current;
 					if (this.displayIndex < 2) {
 						current = this.displayIndex + 1
@@ -374,7 +386,6 @@
 				// #ifndef MP-WEIXIN
 				uni.createVideoContext('video_' + this.displayOldIndex, this).pause(); // 其他平台
 				// #endif
-				oldInfo.playStatus = 0;
 
 				// 对当前视频处理
 				let info = this.originList[this.originIndex];
@@ -398,8 +409,8 @@
 							this.videoPlay();
 						})
 					}, err => {
-						info.playStatus = 10;
-						this.rechargeChange();
+						console.log('进到异常界面')
+						this.rechargeChange(true);
 					})
 				}
 			},
@@ -407,16 +418,16 @@
 				this.rechargeChange(false);
 
 				let info = this.originList[this.originIndex];
-				info.playStatus = 5;
+				this.playStatus = 0;
 
 				setTimeout(() => {
 					// 开了自动播放，所以这里没有用了
 					if (typeof WeixinJSBridge == "undefined") {
-						uni.createVideoContext('video_' + this.displayIndex, this).seek(0)
+						uni.createVideoContext('video_' + this.displayIndex, this).seek(-1);
 						uni.createVideoContext('video_' + this.displayIndex, this).play();
 					} else {
 						WeixinJSBridge.invoke('getNetworkType', {}, e => {
-							uni.createVideoContext('video_' + this.displayIndex, this).seek(0)
+							uni.createVideoContext('video_' + this.displayIndex, this).seek(-1);
 							uni.createVideoContext('video_' + this.displayIndex, this).play();
 						})
 					}
@@ -435,11 +446,56 @@
 			},
 			// 商品点击
 			goodsClick(item) {
-				this.$api.orders.create.request({}).then(data => {
-					this.$api.orders.pay.request({}).then(data => {
-						this.watchChange();
+				this.$api.orders.create.request({
+					'goods_id': item.id
+				}).then(data => {
+					this.$api.orders.pay.request({
+						"order_no": data.order_no,
+						"openid": this.$userServe.getUserInfo('openid')
+					}).then(data => {
+						this.wxPay(data).then(() => {
+							this.watchChange();
+						});
 					})
 				})
+			},
+			wxPay(payData) {
+				return new Promise((r, a) => {
+					uni.requestPayment({
+						appId: 'wx0fe731a495a2841a',
+						signType: payData.sign_type,
+						nonceStr: payData.nonce_str,
+						package: 'prepay_id=' + payData.prepay_id,
+						paySign: payData.pay_sign,
+						timeStamp: payData.timestamp,
+						success: e => {
+							console.log('pay:[success] ===>', e);
+							r();
+						},
+						fail: e => {
+							console.log('pay:[fail] ===>', e);
+							// 支付取消的弹轻提示
+							if (e.errMsg.indexOf('cancel') > -1) {
+								uni.showToast({
+									title: '支付取消',
+									icon: 'none'
+								});
+							} else {
+								uni.showModal({
+									content: '支付失败,原因为: ' + e.errMsg,
+									showCancel: false
+								});
+							}
+							a();
+						},
+						complete: () => {}
+					});
+				});
+			},
+			// 状态发生变化
+			playStatusChange(data) {
+				console.log('状态发生变化', data);
+				this.playStatus = data;
 			},
 			// TODO 点赞
 			linkClick() {

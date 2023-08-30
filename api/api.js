@@ -195,7 +195,7 @@ const $api = {
 		create: {
 			name: '创建订单',
 			api: 'orders',
-			method: 'GET',
+			method: 'POST',
 			showLoading: false,
 			showErrorLoading: false,
 			showSuccessLoading: false,
@@ -206,8 +206,8 @@ const $api = {
 		},
 		pay: {
 			name: '获取支付方式',
-			api: 'order/pay',
-			method: 'GET',
+			api: 'orders/pay',
+			method: 'POST',
 			showLoading: false,
 			showErrorLoading: false,
 			showSuccessLoading: false,

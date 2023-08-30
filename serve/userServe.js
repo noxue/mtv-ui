@@ -115,6 +115,7 @@ class userServe {
 	 * 创建用户
 	 */
 	createUserInfo(userInfo) {
+		console.log('创建用户便利店', userInfo)
 		uni.setStorageSync('userInfo', userInfo)
 		return userInfo;
 	}
