@@ -1,5 +1,6 @@
 '<template>
 	<view class="content">
+		<navbar v-if="showTab" :title="'标题'"></navbar>
 		<swiper :style="'width: '+ windowWidth +'px; height:100vh; background-color: #000;'" class="swiper" circular
 			@change="swiperChange" :current="displayIndex" :vertical="true" duration="300">
 
@@ -7,11 +8,11 @@
 				:style="'width: '+ windowWidth +'px; height:100vh; background-color: #000;'">
 				<view :style="'width: '+ windowWidth +'px; height:'+heightxw+'vh;'">
 
-					<!-- 视频  v-if="index == displayIndex"-->
-					<video :id="'video_' + index" :controls="true" :loop="false" :enable-progress-gesture="false"
+					<!-- 视频  v-if="index == displayIndex" :autoplay="true"-->
+					<video :id="'video_' + index" :controls="false" :loop="false" :enable-progress-gesture="false"
 						:show-center-play-btn="true" :show-loading="true" :show-fullscreen-btn="false" @ended="videoEnd"
 						@click="tapVides()" @pause="playStatusChange(0)" @play="playStatusChange(1)"
-						:style="'width: '+ windowWidth +'px; height:'+heightxw+'vh;'" :autoplay="true"
+						:style="'width: '+ windowWidth +'px; height:'+heightxw+'vh;'" @timeupdate="timeupdate($event,index)"
 						:src="list.videosInfo && list.videosInfo.video" class="tsvideo">
 					</video>
 
@@ -60,6 +61,33 @@
 								{{list.name}} 共{{originList.length}}集 选集>
 							</text>
 						</view>
+
+						<!-- 进度条 -->
+						<view class="flex-row-start-center" style="position: absolute; bottom: 10px;">
+							<view @touchstart="touchstart" @touchmove="touchmove" @touchend="touchend"
+								:style="'width: '+ (windowWidth - (windowWidth*0.20)) +'px; margin-left: '+ (windowWidth * 0.05) +'px; height: 40px; '">
+								<!-- 不拖动情况下 -->
+								<view style="width: 100%;height: 10rpx;position: relative;">
+									<!-- 1.底部背景进度条 -->
+									<view
+										:style="'width: '+ (windowWidth - (windowWidth*0.20)) +'px;  height: 5px; border-radius: 10px; background-color: #999999; opacity: 0.6;'">
+									</view>
+									<!-- 2.播放的进度条 -->
+									<view v-if="!isTouch"
+										:style="'width: '+ ((windowWidth - (windowWidth*0.20)) * progressBarPercent) +'px; position: absolute;top:0rpx;   height: 5px; border-radius: 10px; background-color: #e6e4e7; '">
+									</view>
+									<!-- 3.拖动时的进度条 -->
+									<view v-if="isTouch"
+										:style="'width: '+ (videoStartPositon + addPositon) +'px; position: absolute; top:0rpx;  height: 5px; border-radius: 10px; background-color: #e6e4e7; '">
+									</view>
+								</view>
+							</view>
+							<view class="w-30 h-40" style="flex-shrink:0;" @click.stop="videoChange">
+								<image v-if="playStatus == 0" class="w-h-full" src="@/static/play.png"></image>
+								<image v-if="playStatus == 1" class="w-h-full" src="@/static/play-pause.png"></image>
+							</view>
+						</view>
+
 					</template>
 				</view>
 			</swiper-item>
@@ -152,7 +180,12 @@
 				safeArea: 0, // 安全区配置
 				heightxw: 100, // 安全区配置
 				playStatus: 0, // 播放状态
-				isH5: 0
+				isH5: 0,
+				progressBarPercent: 0, // 进度条
+				videoStartPositon: 0,
+				touchStartPosition: 0,
+				addPositon: 0,
+				isTouch: false
 			};
 		},
 		onLoad(e) {
@@ -253,7 +286,9 @@
 			},
 			// 视频信息
 			tapVides() {
-				if (this.playStatus == 0) {
+				console.log('点击事件', this.playStatus);
+
+				if (this.isH5 == 0) {
 					this.rechargeChange(false);
 
 					let info = this.originList[this.originIndex];
@@ -381,10 +416,14 @@
 				let oldInfo = this.originList[this.originOldIndex];
 
 				// #ifdef MP-WEIXIN
-				uni.createVideoContext('video_' + this.displayOldIndex, this).stop(); // 微信小程序
+				uni.createVideoContext('video_' + 0, this).stop(); // 微信小程序
+				uni.createVideoContext('video_' + 1, this).stop(); // 微信小程序
+				uni.createVideoContext('video_' + 2, this).stop(); // 微信小程序
 				// #endif
 				// #ifndef MP-WEIXIN
-				uni.createVideoContext('video_' + this.displayOldIndex, this).pause(); // 其他平台
+				uni.createVideoContext('video_' + 0, this).pause(); // 其他平台
+				uni.createVideoContext('video_' + 1, this).pause(); // 其他平台
+				uni.createVideoContext('video_' + 2, this).pause(); // 其他平台
 				// #endif
 
 				// 对当前视频处理
@@ -433,6 +472,21 @@
 					}
 				}, 100)
 			},
+			videoChange() {
+				console.log('视频播放变化');
+				if (this.playStatus == 0) {
+					uni.createVideoContext('video_' + this.displayIndex, this).play();
+				} else {
+					// #ifdef MP-WEIXIN
+					uni.createVideoContext('video_' + this.displayIndex, this).stop(); // 微信小程序
+					// #endif
+					// #ifndef MP-WEIXIN
+					uni.createVideoContext('video_' + this.displayIndex, this).pause(); // 其他平台
+					// #endif
+
+					this.playStatus == 0
+				}
+			},
 			// 打开/关闭充值
 			rechargeChange(show) {
 				this.rechargeModel.show = show;
@@ -453,11 +507,50 @@
 						"order_no": data.order_no,
 						"openid": this.$userServe.getUserInfo('openid')
 					}).then(data => {
+						// #ifdef H5
+						this.wxH5Pay(data);
+						// #endif
+
+						// #ifndef H5
 						this.wxPay(data).then(() => {
 							this.watchChange();
-						});
+						})
+						// #endif
 					})
 				})
+			},
+			wxH5Pay(payData) {
+				let _this = this;
+
+				WeixinJSBridge.invoke(
+					'getBrandWCPayRequest', {
+						"appId": "wx190455d0f223c92d", //公众号名称，由商户传入     
+						"timeStamp": payData.timestamp, //时间戳，自1970年以来的秒数     
+						"nonceStr": payData.nonce_str, //随机串     
+						"package": 'prepay_id=' + payData.prepay_id,
+						"signType": payData.pay_sign, //微信签名方式：     
+						"paySign": payData.pay_sign //微信签名 
+					},
+					function(res) {
+						if (res.err_msg == "get_brand_wcpay_request:ok") {
+							// 使用以上方式判断前端返回,微信团队郑重提示：
+							//res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+							setTimeout(() => {
+								_this.watchChange();
+							}, 1000)
+						}
+					});
+
+				// if (typeof WeixinJSBridge == "undefined") {
+				// 	if (document.addEventListener) {
+				// 		document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+				// 	} else if (document.attachEvent) {
+				// 		document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+				// 		document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+				// 	}
+				// } else {
+				// 	onBridgeReady();
+				// }
 			},
 			wxPay(payData) {
 				return new Promise((r, a) => {
@@ -492,18 +585,43 @@
 					});
 				});
 			},
+			// TODO 支付成功,轮询三次如果成功了直接调用watchChange方法，否则三次以后调用watchChange
+			paySuccess() {
+				let time = new Date().getTime() / 1000;
+				
+				setInterval(() => {
+					
+				})
+			},
 			// 状态发生变化
 			playStatusChange(data) {
 				console.log('状态发生变化', data);
 				this.playStatus = data;
+				this.isH5 = 1;
 			},
-			// TODO 点赞
+			// 点赞
 			linkClick() {
+				let info = this.originList[this.originIndex].videosInfo;
 
+				this.$api.movies.like.request({
+					movie_id: this.moviesInfo.id,
+					video_id: info.id,
+					like: !info.is_liked
+				}).then(data => {
+					info.is_liked = !info.is_liked
+				})
 			},
-			// 追剧点击
+			// 追剧
 			followedClick() {
+				let info = this.originList[this.originIndex].videosInfo;
 
+				this.$api.movies.follow.request({
+					movie_id: this.moviesInfo.id,
+					video_id: info.id,
+					follow: !info.is_followed
+				}).then(data => {
+					info.is_followed = !info.is_followed
+				})
 			},
 			setStorage() {
 				let info = this.originList[this.originIndex];
@@ -515,7 +633,75 @@
 						videosId: info.id
 					})
 				}
-			}
+			},
+			timeupdate(event, index) {
+				this.timeduration = event.detail.duration;
+				this.progressBarPercent = parseFloat(Number(event.detail.currentTime / event.detail.duration));
+			},
+			// ---- 进度条相关 --- start
+			touchstart(e) {
+				// console.log(e);
+				this.isTouch = true;
+				// #ifdef H5
+				if (this.isClick) {
+					this.addPositon = 0;
+					this.videoStartPositon = (this.windowWidth - (this.windowWidth * 0.20)) * this.progressBarPercent;
+					this.touchStartPosition = e.changedTouches[0].clientX;
+				}
+				// #endif
+				// #ifdef MP
+				this.addPositon = 0;
+				this.videoStartPositon = (this.windowWidth - (this.windowWidth * 0.20)) * this.progressBarPercent;
+				this.touchStartPosition = e.changedTouches[0].clientX;
+				// #endif
+			},
+			touchmove(e) {
+				// console.log(e);
+				// #ifdef H5
+				if (this.isClick) {
+					let num = e.changedTouches[0].clientX - this.touchStartPosition;
+					if ((this.videoStartPositon + num) <= (this.windowWidth - (this.windowWidth * 0.20))) {
+						this.addPositon = e.changedTouches[0].clientX - this.touchStartPosition;
+					} else {
+						this.addPositon = 0;
+						this.videoStartPositon = (this.windowWidth - (this.windowWidth * 0.20));
+					}
+				}
+				// #endif
+				// #ifdef MP
+				let num = e.changedTouches[0].clientX - this.touchStartPosition;
+				if ((this.videoStartPositon + num) <= (this.windowWidth - (this.windowWidth * 0.20))) {
+					this.addPositon = e.changedTouches[0].clientX - this.touchStartPosition;
+				} else {
+					this.addPositon = 0;
+					this.videoStartPositon = (this.windowWidth - (this.windowWidth * 0.20));
+				}
+				// #endif
+			},
+			touchend(e) {
+				// #ifdef H5
+				if (this.isClick) {
+					let per = Number((this.videoStartPositon + this.addPositon) / (this.windowWidth - (this.windowWidth * 0.20)));
+					let timeSubmit = parseInt(this.timeduration * per)
+
+					uni.createVideoContext('video_' + this.displayIndex, this).seek(timeSubmit)
+					uni.createVideoContext('video_' + this.displayIndex, this).play()
+					setTimeout(() => {
+						this.isTouch = false;
+					}, 500)
+				}
+				// #endif
+				// #ifdef MP
+				let per = Number((this.videoStartPositon + this.addPositon) / (this.windowWidth - (this.windowWidth * 0.20)));
+				let timeSubmit = parseInt(this.timeduration * per)
+
+				uni.createVideoContext('video_' + this.displayIndex, this).seek(timeSubmit)
+				uni.createVideoContext('video_' + this.displayIndex, this).play()
+				setTimeout(() => {
+					this.isTouch = false;
+				}, 500)
+				// #endif
+			},
 		},
 
 	};
@@ -625,7 +811,7 @@
 		position: absolute;
 		bottom: 100rpx;
 		padding: 15rpx;
-		width: 720rpx;
+		// width: 720rpx;
 		display: flex;
 		flex-direction: column;
 		justify-content: flex-start;
@@ -633,7 +819,6 @@
 	}
 
 	.userName {
-		margin-top: 80upx;
 		font-size: 30rpx;
 		color: #ffffff;
 	}

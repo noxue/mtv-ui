@@ -1,46 +1,43 @@
 <template>
 	<view class="loveList-page page-base">
 		<view class="goods-list m-t-200">
-			<view class="goods-item" v-for="(item,index) in list" @click="$wxRouter.toPage('/pages/home/video')">
-				<image class="w-180 h-200" :src="item.cover"></image>
+			<view class="goods-item" v-for="(item,index) in pageList.data"
+				@click="$wxRouter.toPage('/pages/home/video?mid=' + item.id +'&vid=' + item.video_id)">
+				<imageUrl class="w-180 h-200" :src="item.cover"></imageUrl>
 				<view class="m-l-15 flex-column-center flex-1">
 					<view class="font-28" style="font-weight: 700;">{{item.movie_name}}</view>
-					<view class="flex-row m-t-10">看到<view class="m-l-5" style="color:#fd9261;">第TODO集</view>
+					<view class="flex-row m-t-10">看到<view class="m-l-5" style="color:#fd9261;">{{item.video_name}}</view>
 					</view>
-					<view class="flex-row m-t-10">更新至<view class="m-l-5" style="font-weight: 700;">第TODO集</view>
+					<view class="flex-row m-t-10">更新至<view class="m-l-5" style="font-weight: 700;">{{item.video_name}}</view>
 					</view>
 				</view>
 				<image class="w-35 h-50 m-r-20" src="@/static/logo.png" @click.stop="pageListItemRemove(item)"></image>
 			</view>
 		</view>
+
+		<pageList :pageList="pageList"></pageList>
 	</view>
 </template>
 
 <script>
-	// 我的追剧
+	import pageList from '@/mixin/pageList.js';
+
+	// 观看历史
 	export default {
+		mixins: [pageList],
 		components: {},
 		data() {
-			return {
-				list: [],
-			}
+			return {}
 		},
-		onLoad() {
-			this.pageDataGet();
-		},
-		onReady() {},
-		onPullDownRefresh() {},
-		onReachBottom() {},
+		onLoad() {},
 		methods: {
-			pageDataGet() {
-				this.$api.users.follows.request().then(data => {
-					this.list = data;
-					console.log(this.list);
-				});
+			pageListDataPageRequest(params) {
+				return new Promise((r, a) => {
+					this.$api.users.follows.request(params).then(data => {
+						r(data)
+					})
+				})
 			},
-			pageListDataPageRequest() {
-				return this.$api.getBanner();
-			}
 		}
 	}
 </script>

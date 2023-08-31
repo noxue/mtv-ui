@@ -104,11 +104,10 @@ const $api = {
 			name: '最近观看',
 			api: 'users/recents',
 			method: 'GET',
-			// apiType: 'login',
+			apiType: 'login',
 			showLoading: false,
 			showErrorLoading: false,
 			showSuccessLoading: false,
-			mock: true,
 			request: function(data = {}, config = {}) {
 				return promise(this, data, config);
 			}
@@ -117,15 +116,26 @@ const $api = {
 			name: '我的追剧',
 			api: 'users/follows',
 			method: 'GET',
-			// apiType: 'login',
+			apiType: 'login',
 			showLoading: false,
 			showErrorLoading: false,
 			showSuccessLoading: false,
-			mock: true,
 			request: function(data = {}, config = {}) {
 				return promise(this, data, config);
 			}
-		}
+		},
+		channel: {
+			name: '用户渠道',
+			api: 'users/channel',
+			method: 'POST',
+			apiType: 'login',
+			showLoading: false,
+			showErrorLoading: false,
+			showSuccessLoading: false,
+			request: function(data = {}, config = {}) {
+				return promise(this, data, config);
+			}
+		},
 	},
 	movies: {
 		list: {
@@ -172,6 +182,37 @@ const $api = {
 			showErrorLoading: false,
 			showSuccessLoading: false,
 			// mock: true,
+			request: function(data = {}, config = {}) {
+				return promise(this, data, config);
+			}
+		},
+		like: {
+			name: '点赞',
+			api: 'movies/like',
+			method: 'POST',
+			showLoading: false,
+			showErrorLoading: false,
+			showSuccessLoading: false,
+			// data: {
+			// 	movie_id: '',
+			// 	video_id: '',
+			// 	like: Boolean
+			// }
+			request: function(data = {}, config = {}) {
+				return promise(this, data, config);
+			}
+		},
+		follow: {
+			name: '追剧',
+			api: 'movies/follow',
+			method: 'POST',
+			showLoading: false,
+			showErrorLoading: false,
+			showSuccessLoading: false,
+			// data: {
+			// 	movie_id: '',
+			// 	follow: Boolean
+			// }
 			request: function(data = {}, config = {}) {
 				return promise(this, data, config);
 			}

@@ -93,9 +93,9 @@ module.exports = {
 				pageList.pageStatus = 1;
 				pageList.data = [];
 			}
-			
-			console.log(1,pageList.pageStatus);
-			
+
+			console.log(1, pageList.pageStatus);
+
 			// 状态判断
 			if (pageList.pageStatus !== 1) return false;
 			pageList.pageStatus = 5;
@@ -105,9 +105,12 @@ module.exports = {
 				return false;
 			}
 			console.log(3);
-			this.pageListDataPageRequest().then(list => {
-				console.log('翻页数据',list);
-				
+			this.pageListDataPageRequest({
+				pageNum: this.pageList.pageNum,
+				pageSize: this.pageList.pageSize,
+			}).then(list => {
+				console.log('翻页数据', list);
+
 				if (!list) list = []; // 防止空数据报错
 
 				// 数据调整

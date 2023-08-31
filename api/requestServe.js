@@ -94,6 +94,8 @@ class requestServe {
 			if (sysInfo) {
 				config.header['appid'] = 'wx0fe731a495a2841a'; // sysInfo.api;
 			}
+		} else {
+			config.header['appid'] = 'wx190455d0f223c92d' // 公众号
 		}
 
 		// 开启模拟数据

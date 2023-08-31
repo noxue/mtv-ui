@@ -3,12 +3,18 @@
 		"^u-(.*)": "@/uview-ui/components/u-$1/u-$1.vue",
 		"emptyBottom": "@/components/base/emptyBottom.vue",
 		"pageList": "@/components/base/pageList.vue",
-		"imageUrl": "@/components/base/imageUrl.vue"
+		"imageUrl": "@/components/base/imageUrl.vue",
+		"navbar": "@/components/base/navbar.vue"
 	},
 	"pages": [{
 			"path": "pages/home/home",
 			"style": {
 				"navigationBarTitleText": "小剧场"
+			}
+		}, {
+			"path": "pages/home/logo",
+			"style": {
+				"navigationBarTitleText": "登录"
 			}
 		}, {
 			"path": "pages/home/hotList",

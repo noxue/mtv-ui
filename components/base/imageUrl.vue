@@ -1,5 +1,5 @@
 <template>
-  <image class="w-h-full" :src="imageUrl" :style="style_" :show-menu-by-longpress="showMenuByLongpress"></image>
+  <image class="w-h-full" style="font-size: 0rpx;" :src="imageUrl" :style="style_" :show-menu-by-longpress="showMenuByLongpress"></image>
 </template>
 
 <script>
