@@ -1,7 +1,10 @@
 <template>
-	<view class="navbar" style="position: fixed;clear: #fff;"
+	<view class="navbar flex-row-start-center" style="position: fixed;clear: #fff;"
 		:style="{ top: top + 'px', height: height + 'px', width: width }">
-		<view @click="toBack">{{title}}</view>
+		<view style="line-height: 1em;" class="m-l-20 flex-row-start-center" @click="toBack">
+			<image src="@/static/back.png" class="w-14 h-24"></image>
+			<view class="m-l-8">{{title}}</view>
+		</view>
 	</view>
 </template>
 
@@ -23,7 +26,7 @@
 		},
 		created() {
 			// #ifdef H5
-			this.top = 44;
+			this.top = 0;
 			this.height = 50;
 			this.width = '100vw';
 			// #endif
@@ -36,8 +39,8 @@
 			this.width = windowInfo.windowWidth - info.width + 'px';
 			// #endif
 		},
-		methods:{
-			toBack(){
+		methods: {
+			toBack() {
 				uni.navigateBack();
 			}
 		}

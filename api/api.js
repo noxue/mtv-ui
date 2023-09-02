@@ -147,6 +147,7 @@ const $api = {
 			showSuccessLoading: false,
 			// mock: true,	
 			request: function(data = {}, config = {}) {
+				console.log('怕减肥的',config)
 				return promise(this, data, config);
 			}
 		},

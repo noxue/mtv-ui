@@ -2,15 +2,15 @@
 	<view class="home-page page-base p-20">
 		<!-- 顶部导航 -->
 		<view class="tab-list flex-row-between-center" style="justify-content:space-evenly;">
-			<view class="tab-item" @click="$wxRouter.toPage('/pages/home/hotList')">
+			<view class="tab-item" @click="orderClick('hot')">
 				<image class="w-h-80" src="@/static/home-hot.png"></image>
 				<view class="tab-text">热门</view>
 			</view>
-			<view class="tab-item" @click="$wxRouter.toPage('/pages/home/hotList')">
+			<view class="tab-item" @click="orderClick('update_time')">
 				<image class="w-h-80" src="@/static/home-new.png"></image>
 				<view class="tab-text">最新</view>
 			</view>
-			<view class="tab-item" @click="$wxRouter.toPage('/pages/home/newList')">
+			<view class="tab-item" @click="orderClick('top')">
 				<image class="w-h-80" src="@/static/home-tuijian.png"></image>
 				<view class="tab-text">推荐</view>
 			</view>
@@ -49,12 +49,14 @@
 			return {
 				continueWatch: null,
 				continueWatchShow: true,
+				type: '', // hot top like view update_time price
+				order: false, // true = desc
 			}
 		},
 		onLoad(e) {
 			console.log('登录', e)
 
-		
+
 		},
 		onReady() {
 			this.continueWatch = uni.getStorageSync('watch');
@@ -69,9 +71,18 @@
 			}
 		},
 		methods: {
+			orderClick(type, order) {
+				this.type = type;
+				this.order = order;
+
+				this.pageListRequest('reset');
+			},
 			pageListDataPageRequest() {
 				return new Promise((r, a) => {
-					this.$api.movies.list.request().then(data => {
+					this.$api.movies.list.request({}, {
+						url: this.$hostConfig.apiHost + '/' + 'movies?' + this.type +
+							(this.order == true ? '＆desc' : '')
+					}).then(data => {
 						console.log('获取数据', data)
 						r(data.data)
 					})
@@ -86,7 +97,7 @@
 					videosId: this.continueWatch.videosId,
 				})
 			},
-	
+
 		}
 	}
 </script>

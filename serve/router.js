@@ -2,6 +2,7 @@
  * 简易路由系统
  ************************/
 import userServe from '@/serve/userServe.js'
+
 // import {
 // 	objectToParams
 // } from '@/function/url.js'
@@ -14,7 +15,7 @@ export const tabPageList = [
 	'/pages/member/index',
 ];
 
-// 常用列表页,用来支持各个插件使用
+// 常用列表页,用来支持各个插件使用,基本是常用的
 export const pageList = {
 	'home': '/pages/index/index', //首页,涉及到后退，异常等操作必须配置
 	'login': '/pages/login/login', //用户授权登录
@@ -25,7 +26,7 @@ export const pageList = {
 
 // 登录成功后后退上一页，如果上一页为以下url则会退到到首页
 export const loginSuccessRedirectUrl = [
-	'/pages/lgoin/index'
+	'/pages/login/index'
 ];
 
 /**

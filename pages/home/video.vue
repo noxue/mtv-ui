@@ -1,6 +1,6 @@
 '<template>
 	<view class="content">
-		<navbar v-if="showTab" :title="'标题'"></navbar>
+		<navbar v-if="showTab" :title="'第'+(originIndex + 1) +'集'"></navbar>
 		<swiper :style="'width: '+ windowWidth +'px; height:100vh; background-color: #000;'" class="swiper" circular
 			@change="swiperChange" :current="displayIndex" :vertical="true" duration="300">
 
@@ -63,9 +63,9 @@
 						</view>
 
 						<!-- 进度条 -->
-						<view class="flex-row-start-center" style="position: absolute; bottom: 10px;">
+						<view class="flex-row-start-center" style="position: absolute; bottom: 50rpx;">
 							<view @touchstart="touchstart" @touchmove="touchmove" @touchend="touchend"
-								:style="'width: '+ (windowWidth - (windowWidth*0.20)) +'px; margin-left: '+ (windowWidth * 0.05) +'px; height: 40px; '">
+								:style="'width: '+ (windowWidth - (windowWidth*0.20)) +'px; margin-left: '+ (windowWidth * 0.05) +'px;'">
 								<!-- 不拖动情况下 -->
 								<view style="width: 100%;height: 10rpx;position: relative;">
 									<!-- 1.底部背景进度条 -->
@@ -82,7 +82,7 @@
 									</view>
 								</view>
 							</view>
-							<view class="w-30 h-40" style="flex-shrink:0;" @click.stop="videoChange">
+							<view class="w-40 h-50 m-l-30" style="flex-shrink:0;" @click.stop="videoChange">
 								<image v-if="playStatus == 0" class="w-h-full" src="@/static/play.png"></image>
 								<image v-if="playStatus == 1" class="w-h-full" src="@/static/play-pause.png"></image>
 							</view>
@@ -588,9 +588,9 @@
 			// TODO 支付成功,轮询三次如果成功了直接调用watchChange方法，否则三次以后调用watchChange
 			paySuccess() {
 				let time = new Date().getTime() / 1000;
-				
+
 				setInterval(() => {
-					
+
 				})
 			},
 			// 状态发生变化
