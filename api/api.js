@@ -49,10 +49,11 @@
 import hostConst from '@/config/hostConfig.js'
 import userServe from '@/serve/userServe.js'
 import router from '@/serve/router.js'
-import requestServeObj from '@/api/requestServe.js';
+import requestServe from '@/api/requestServe.js';
+import apiFun from './apiFun.js';
 
 // 配置参数
-let requestServe = new requestServeObj();
+// let requestServe = new requestServeObj();
 requestServe.baseUrl = hostConst.apiHost + '/';
 requestServe.codeFunList = {
 	"301": router.toLogin,
@@ -66,7 +67,7 @@ requestServe.codeFunList = {
 }
 requestServe.checkUserLogin = userServe.checkUserLogin;
 requestServe.checkUserRegister = userServe.checkUserRegister;
-requestServe.userWxLogin = userServe.userWxLogin;
+requestServe.userWxLogin = userWxLogin;
 requestServe.getUserToken = function() {
 	return userServe.getUserToken();
 }
@@ -179,6 +180,7 @@ const $api = {
 			name: '视频详情',
 			api: 'movies/videosDetail',
 			method: 'GET',
+			apiType: 'login',
 			showLoading: false,
 			showErrorLoading: false,
 			showSuccessLoading: false,
@@ -191,6 +193,7 @@ const $api = {
 			name: '点赞',
 			api: 'movies/like',
 			method: 'POST',
+			apiType: 'login',
 			showLoading: false,
 			showErrorLoading: false,
 			showSuccessLoading: false,
@@ -207,6 +210,7 @@ const $api = {
 			name: '追剧',
 			api: 'movies/follow',
 			method: 'POST',
+			apiType: 'login',
 			showLoading: false,
 			showErrorLoading: false,
 			showSuccessLoading: false,
@@ -257,6 +261,18 @@ const $api = {
 			request: function(data = {}, config = {}) {
 				return promise(this, data, config);
 			}
+		},
+		check: {
+			name: '订单检测',
+			api: 'orders/check',
+			method: 'GET',
+			showLoading: false,
+			showErrorLoading: false,
+			showSuccessLoading: false,
+			// mock: true,
+			request: function(data = {}, config = {}) {
+				return promise(this, data, config);
+			}
 		}
 	},
 	wx: {
@@ -271,6 +287,85 @@ const $api = {
 				return promise(this, data, config);
 			}
 		}
+	}
+}
+
+// 用户登录
+export function userWxLogin() {
+	let that = this;
+
+	return new Promise((r, a) => {
+		uni.login({
+			provider: 'weixin',
+			success: function(loginRes) {
+				$api.wx.login.request({
+					code: loginRes.code,
+					login_type: 'weapp'
+				}).then(data => {
+
+					let {
+						token,
+						regist,
+						openid, // 是否注册
+					} = data
+
+					userServe.createUserInfo({
+						token,
+						openid,
+						regist // 是否注册
+					})
+
+					userSetChannel();
+					r()
+				}, () => {
+					a()
+				});
+			}
+		});
+	})
+}
+
+// 使用code方式登录
+export function userCodeLogin(code, loginType) {
+	let that = this;
+
+	return new Promise((r, a) => {
+		api.wx.login.request({
+			code: code,
+			login_type: loginType
+		}).then(data => {
+			let {
+				token,
+				openid, // 是否注册
+			} = data
+
+			userServe.createUserInfo({
+				token,
+				openid,
+			})
+
+			userSetChannel();
+
+			r()
+		}, () => {
+			a()
+		});
+	})
+}
+
+
+/**
+ * 设置用户渠道
+ */
+function userSetChannel() {
+	let channel = uni.getStorageSync('channel');
+
+	if (channel) {
+		$api.users.channel.request({
+			channel: channel
+		}).then(data => {
+			// TODO 是否删除渠道参数
+		})
 	}
 }
 
@@ -297,9 +392,5 @@ var promise = function(apiConfig, data = {}, config = {}) {
 		requestServe.request(config)
 	});
 }
-
-
-
-
 
 module.exports = $api;

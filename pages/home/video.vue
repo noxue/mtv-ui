@@ -127,8 +127,8 @@
 				<view class="p-lr-36">
 					<view class="flex-row-between-center m-t-20">
 						<view>
-							<view>解锁本集:{{originList[originIndex] && originList[originIndex].price}}金币</view>
-							<view>账号余额:0金币</view>
+							<view>解锁本集: {{originList[originIndex] ? originList[originIndex].price : '0'}}金币</view>
+							<view>账号余额: {{userInfo.score}}金币</view>
 						</view>
 						<view class="weChatPay-button">
 							微信支付
@@ -213,6 +213,7 @@
 
 			this.windowWidth = uni.getSystemInfoSync().windowWidth
 
+			this.getUserInfo();
 			this.getMoviesDetail();
 			this.getVideosList();
 		},
@@ -238,6 +239,11 @@
 			return obj
 		},
 		methods: {
+			getUserInfo(){
+				this.$api.users.me.request().then(data => {
+					this.userInfo = data;
+				})
+			},
 			// 获取短剧详情
 			getMoviesDetail() {
 				this.$api.movies.detail.request({}, {
@@ -514,17 +520,20 @@
 				this.$api.orders.create.request({
 					'goods_id': item.id
 				}).then(data => {
+					let orderNo = data.order_no;
 					this.$api.orders.pay.request({
-						"order_no": data.order_no,
+						"order_no": orderNo,
 						"openid": this.$userServe.getUserInfo('openid')
 					}).then(data => {
 						// #ifdef H5
-						this.wxH5Pay(data);
+						this.wxH5Pay(data).then(() => {
+							this.paySuccess(orderNo);
+						});
 						// #endif
 
 						// #ifndef H5
 						this.wxPay(data).then(() => {
-							this.watchChange();
+							this.paySuccess(orderNo);
 						})
 						// #endif
 					})
@@ -532,25 +541,6 @@
 			},
 			wxH5Pay(payData) {
 				let _this = this;
-
-				WeixinJSBridge.invoke(
-					'getBrandWCPayRequest', {
-						"appId": "wx190455d0f223c92d", //公众号名称，由商户传入     
-						"timeStamp": payData.timestamp, //时间戳，自1970年以来的秒数     
-						"nonceStr": payData.nonce_str, //随机串     
-						"package": 'prepay_id=' + payData.prepay_id,
-						"signType": payData.pay_sign, //微信签名方式：     
-						"paySign": payData.pay_sign //微信签名 
-					},
-					function(res) {
-						if (res.err_msg == "get_brand_wcpay_request:ok") {
-							// 使用以上方式判断前端返回,微信团队郑重提示：
-							//res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
-							setTimeout(() => {
-								_this.watchChange();
-							}, 1000)
-						}
-					});
 
 				// if (typeof WeixinJSBridge == "undefined") {
 				// 	if (document.addEventListener) {
@@ -562,6 +552,30 @@
 				// } else {
 				// 	onBridgeReady();
 				// }
+
+				return new Promise((r, a) => {
+					WeixinJSBridge.invoke(
+						'getBrandWCPayRequest', {
+							"appId": "wx190455d0f223c92d", //公众号名称，由商户传入     
+							"timeStamp": payData.timestamp, //时间戳，自1970年以来的秒数     
+							"nonceStr": payData.nonce_str, //随机串     
+							"package": 'prepay_id=' + payData.prepay_id,
+							"signType": payData.pay_sign, //微信签名方式：     
+							"paySign": payData.pay_sign //微信签名 
+						},
+						function(res) {
+							if (res.err_msg == "get_brand_wcpay_request:ok") {
+								r();
+							} else {
+								uni.showModal({
+									content: '支付失败,原因为: ' + e.err_msg,
+									showCancel: false
+								});
+
+								a();
+							}
+						});
+				});
 			},
 			wxPay(payData) {
 				return new Promise((r, a) => {
@@ -596,13 +610,24 @@
 					});
 				});
 			},
-			// TODO 支付成功,轮询三次如果成功了直接调用watchChange方法，否则三次以后调用watchChange
-			paySuccess() {
-				let time = new Date().getTime() / 1000;
+			paySuccess(orderId) {
+				let time = 0;
 
-				setInterval(() => {
+				let timer = setInterval(() => {
+					time++;
 
-				})
+					if (time >= 4) {
+						clearInterval(timer);
+						this.watchChange();
+						return false;
+					}
+
+					this.$api.orders.check.request({}, {
+						url: this.$hostConfig.apiHost + '/' + 'orders/' + orderId + '/pay/check'
+					}).then(data => {
+						this.watchChange();
+					})
+				}, 1000)
 			},
 			// 状态发生变化
 			playStatusChange(data) {
@@ -773,8 +798,8 @@
 	}
 
 	.playState {
-		width: 160rpx;
-		height: 160rpx;
+		width: 120rpx;
+		height: 120rpx;
 		opacity: 0.2;
 	}
 

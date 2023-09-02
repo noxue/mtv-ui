@@ -139,7 +139,7 @@ class requestServe {
 			// 用户未登录
 			if (this.checkUserLogin() == false) {
 				// 重新登录,再次请求,如果不需要可以直接返回首页
-				this.userLoginAsync();
+				this.userLoginAsync(config);
 				return false;
 			}
 		} else if (config.apiType == 'register') { // 需要用户注册
@@ -158,15 +158,13 @@ class requestServe {
 
 		}
 
-		// f04823927b6c4e1a9724bccbddf07d48
-		config.header['token'] = '51dd3e7e4994418fa197ff6db36d7066';
-
 		return true
 	}
 
 	// 用户token过期时，重新登录处理
 	userLoginAsync(config) {
 		this.loginRequest.push(config) // 缓存未登录的接口配置
+		console.log('循环调用开始', this.loginRequest);
 
 		// 防止多次请求用户登录进行限制
 		if (this.login == true) return false;
@@ -176,6 +174,7 @@ class requestServe {
 		this.userWxLogin().then(() => {
 			// 请求成功后,循环请求之前缓存的调用
 			this.loginRequest.forEach((item) => {
+				console.log('循环调用', item)
 				this.request(item)
 			})
 
@@ -413,4 +412,4 @@ class requestServe {
 	}
 }
 
-export default requestServe;
+export default new requestServe();

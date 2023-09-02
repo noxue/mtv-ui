@@ -41,7 +41,7 @@
 		},
 		methods: {
 			toBack() {
-				uni.navigateBack();
+				this.$wxRouter.toBack();
 			}
 		}
 	};

@@ -55,13 +55,13 @@
 		},
 		onLoad(e) {
 			console.log('登录', e)
+		},
+		onShow() {
 			this.continueWatch = uni.getStorageSync('watch');
 		},
 		onReady() {},
 		onPullDownRefresh() {},
-		onReachBottom() {
-
-		},
+		onReachBottom() {},
 		onPageScroll(e) {
 			if (e.scrollTop > 250) {
 				this.continueWatchShow = false;

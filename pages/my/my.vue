@@ -16,9 +16,9 @@
 					<view style="color:#ff7426;">{{userInfo.score || 0}}</view>
 					<view class="m-t-5" style="color:#999999;">我的金币</view>
 				</view>
-				<view class="pay-button" @click="$wxRouter.toPage('/pages/index/index')">
+				<!-- <view class="pay-button" @click="$wxRouter.toPage('/pages/index/index')">
 					<view>充值金币</view>
-				</view>
+				</view> -->
 			</view>
 		</view>
 

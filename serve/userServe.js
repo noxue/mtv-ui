@@ -43,42 +43,6 @@ class userServe {
 	}
 
 	/**
-	 * 微信登录
-	 */
-	userWxLogin() {
-		let that = this;
-		return new Promise((r, a) => {
-			uni.login({
-				provider: 'weixin',
-				success: function(loginRes) {
-					api.user.login.request({
-						code: loginRes.code,
-					}).then(data => {
-
-						uni.setStorageSync('loginInfo', {
-							session_key: data.session_key
-						})
-
-						let {
-							token,
-							regist, // 是否注册
-						} = data
-
-						that.createUserInfo({
-							token,
-							regist // 是否注册
-						})
-
-						r()
-					}, () => {
-						a()
-					});
-				}
-			});
-		})
-	}
-
-	/**
 	 * 检车用户是否注册
 	 * @param {boolean} isToUserLogin 是否跳转到登录页面,如果为true,未登录将会跳转到登录页面
 	 */

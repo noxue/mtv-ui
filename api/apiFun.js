@@ -1,9 +1,9 @@
 import api from '@/api/api.js';
 import userServe from '@/serve/userServe.js';
+
 /**
  * 这里主要放不能非页面接口
  */
-
 function userWxLogin() {
 	let that = this;
 	return new Promise((r, a) => {
@@ -44,8 +44,8 @@ function userCodeLogin(code, loginType) {
 	let that = this;
 	return new Promise((r, a) => {
 		api.wx.login.request({
-			code: loginRes.code,
-			login_type: 'weapp'
+			code: code,
+			login_type: loginType
 		}).then(data => {
 			let {
 				token,
