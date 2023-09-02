@@ -55,12 +55,9 @@
 		},
 		onLoad(e) {
 			console.log('登录', e)
-
-
-		},
-		onReady() {
 			this.continueWatch = uni.getStorageSync('watch');
 		},
+		onReady() {},
 		onPullDownRefresh() {},
 		onReachBottom() {
 

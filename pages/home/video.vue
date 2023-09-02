@@ -1,6 +1,7 @@
 '<template>
 	<view class="content">
 		<navbar v-if="showTab" :title="'第'+(originIndex + 1) +'集'"></navbar>
+
 		<swiper :style="'width: '+ windowWidth +'px; height:100vh; background-color: #000;'" class="swiper" circular
 			@change="swiperChange" :current="displayIndex" :vertical="true" duration="300">
 
@@ -12,8 +13,9 @@
 					<video :id="'video_' + index" :controls="false" :loop="false" :enable-progress-gesture="false"
 						:show-center-play-btn="true" :show-loading="true" :show-fullscreen-btn="false" @ended="videoEnd"
 						@click="tapVides()" @pause="playStatusChange(0)" @play="playStatusChange(1)"
-						:style="'width: '+ windowWidth +'px; height:'+heightxw+'vh;'" @timeupdate="timeupdate($event,index)"
-						:src="list.videosInfo && list.videosInfo.video" class="tsvideo">
+						:style="'width: '+ windowWidth +'px; height:'+heightxw+'vh; z-index: -1'"
+						@timeupdate="timeupdate($event,index)" :src="list.videosInfo && list.videosInfo.video" class="tsvideo"
+						x5-video-player-type="h5" x5-video-player-fullscreen="true" webkit-playsinline="true" playsinline>
 					</video>
 
 					<!-- 视频不存在的时候弹出 -->
@@ -189,6 +191,7 @@
 			};
 		},
 		onLoad(e) {
+			console.log('这查票在要', e);
 			// 短视频id
 			if (e.mid || e.moviesId) {
 				this.moviesId = parseInt(e.mid || e.moviesId)
@@ -385,6 +388,8 @@
 					current
 				} = event.detail;
 
+				this.progressBarPercent = 0;
+
 				const originListLength = this.originList.length; // 源数据长度
 
 				// =============向后==========
@@ -460,7 +465,12 @@
 				this.playStatus = 0;
 
 				setTimeout(() => {
-					// 开了自动播放，所以这里没有用了
+					// #ifdef MP
+					uni.createVideoContext('video_' + this.displayIndex, this).seek(-1);
+					uni.createVideoContext('video_' + this.displayIndex, this).play();
+					// #endif
+
+					// #ifdef H5
 					if (typeof WeixinJSBridge == "undefined") {
 						uni.createVideoContext('video_' + this.displayIndex, this).seek(-1);
 						uni.createVideoContext('video_' + this.displayIndex, this).play();
@@ -470,6 +480,7 @@
 							uni.createVideoContext('video_' + this.displayIndex, this).play();
 						})
 					}
+					// #endif
 				}, 100)
 			},
 			videoChange() {
@@ -609,6 +620,12 @@
 					like: !info.is_liked
 				}).then(data => {
 					info.is_liked = !info.is_liked
+
+					if (info.is_liked == true) {
+						info.likes = info.likes + 1
+					} else if (info.is_liked == false) {
+						info.likes = info.likes - 1
+					}
 				})
 			},
 			// 追剧

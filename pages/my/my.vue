@@ -8,7 +8,7 @@
 				<view class="font-22 m-t-15" style="color: #999999;">用户ID:{{userInfo.id || ''}}</view>
 			</view>
 		</view>
-		
+
 		<view class="my-top m-t-20">
 			<!-- tab列表 -->
 			<view class="flex-row-between-center" style="justify-content:space-around;">
@@ -97,8 +97,8 @@
 	}
 
 	.my-top {
-		padding:20rpx;
-		border-radius:10rpx;
+		padding: 20rpx;
+		border-radius: 10rpx;
 		background-color: #fff;
 	}
 
