@@ -110,7 +110,8 @@
 					<view class="video-list">
 						<view class="video-item" v-for="(item,index) in originList" :key="index" @click="vidoeWitch(index)"
 							:id="'goods_' + index">
-							{{index + 1}}
+							<view v-if="index != originIndex">{{index + 1}}</view>
+							<image v-else class="w-h-70" src="../../static/playing.png"></image>
 							<view class="pay-lock" v-if="item.price > 0">
 								<image class="w-h-full" src="@/static/lock.png"></image>
 							</view>

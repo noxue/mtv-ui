@@ -19,6 +19,11 @@ requestServe.userWxLogin = apiFun.userWxLogin;
 requestServe.userLogout = function() {
 	userServe.logout()
 
+	uni.showToast({
+		title: '登录过期',
+		icon: 'none'
+	})
+
 	setTimeout(function() {
 		router.toPageName('home')
 	}, 1500)
