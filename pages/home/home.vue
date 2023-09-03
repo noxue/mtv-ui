@@ -47,17 +47,24 @@
 		mixins: [pageList],
 		data() {
 			return {
+				options: {},
 				continueWatch: null,
 				continueWatchShow: true,
 				type: '', // hot top like view update_time price
 				order: false, // true = desc
 			}
 		},
-		onLoad(e) {
-			console.log('登录', e)
+		onLoad(options) {
+			console.log('登录', options)
+			this.options = options;
 		},
-		onShow() {
+		onShow(e) {
 			this.continueWatch = uni.getStorageSync('watch');
+
+			// 用户进行登录
+			if (this.$userServe.checkUserLogin() == false) {
+				this.$userServe.userLogin(this.options.code)
+			}
 		},
 		onReady() {},
 		onPullDownRefresh() {},

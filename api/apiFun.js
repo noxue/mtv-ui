@@ -39,32 +39,6 @@ function userWxLogin() {
 	})
 }
 
-// 使用code方式登录
-function userCodeLogin(code, loginType) {
-	let that = this;
-	return new Promise((r, a) => {
-		api.wx.login.request({
-			code: code,
-			login_type: loginType
-		}).then(data => {
-			let {
-				token,
-				openid, // 是否注册
-			} = data
-
-			userServe.createUserInfo({
-				token,
-				openid,
-			})
-
-			userSetChannel();
-
-			r()
-		}, () => {
-			a()
-		});
-	})
-}
 
 /**
  * 设置用户渠道
@@ -83,6 +57,5 @@ function userSetChannel() {
 
 module.exports = {
 	userWxLogin,
-	userCodeLogin,
 	userSetChannel
 };

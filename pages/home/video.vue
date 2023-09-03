@@ -13,17 +13,17 @@
 					<video :id="'video_' + index" :controls="false" :loop="false" :enable-progress-gesture="false"
 						:show-center-play-btn="true" :show-loading="true" :show-fullscreen-btn="false" @ended="videoEnd"
 						@click="tapVides()" @pause="playStatusChange(0)" @play="playStatusChange(1)"
-						:style="'width: '+ windowWidth +'px; height:'+heightxw+'vh; z-index: -1'"
+						:style="'width: '+ windowWidth +'px; height:'+heightxw+'vh; z-index: -1'" :poster="moviesInfo.cover"
 						@timeupdate="timeupdate($event,index)" :src="list.videosInfo && list.videosInfo.video" class="tsvideo"
 						x5-video-player-type="h5" x5-video-player-fullscreen="true" webkit-playsinline="true" playsinline>
 					</video>
 
 					<!-- 视频不存在的时候弹出 -->
-					<view v-if="index == displayIndex && !list.videosInfo" class="videoHover tsimg" @click.stop="rechargeChange"
-						:style="'width: '+ windowWidth +'px; height:'+heightxw+'vh;'">
-						<image :src="list.img"
-							:style="'width: 100vw; height:'+heightxw+'vh; background-color: #000; position: absolute;'"
-							mode="aspectFit"></image>
+					<view v-if="index != displayIndex || !list.videosInfo || playStatus == 0 " class="videoHover tsimg"
+						@click.stop="watchChange" :style="'width: '+ windowWidth +'px; height:'+heightxw+'vh;'">
+						<imageUrl :src="moviesInfo.cover"
+							:style="'width: 100vw; height:'+heightxw+'vh; background-color: #000; position: absolute;'">
+						</imageUrl>
 						<image class="playState" src="@/static/play.png"></image>
 					</view>
 
@@ -38,7 +38,7 @@
 								<image v-else src="@/static/aixin.png" style="width: 60rpx; height: 50rpx;">
 								</image>
 								<text style=" color: #FFFFFF; margin-top: 5px; font-size: 14px; text-align: center;font-weight: bold;"
-									:class="{'likeNumActive':list.like}">{{(list.videosInfo && list.videosInfo.likes) || 0}}</text>
+									:class="{'likeNumActive':list.like}">{{likes}}</text>
 							</view>
 							<!-- 追剧 -->
 							<view @click.stop="followedClick" class="flex-column-center-center"
@@ -156,6 +156,11 @@
 </template>
 
 <script>
+	import userServe from '@/serve/userServe.js';
+	import {
+		div
+	} from '@/function/bc.js';
+
 	export default {
 		data() {
 			return {
@@ -190,6 +195,14 @@
 				isTouch: false
 			};
 		},
+		computed: {
+			likes() {
+				let num1 = this.moviesInfo.vlikes || 0;
+				let num2 = (this.originList[this.originIndex] && this.originList[this.originIndex].videosInfo && this.originList[
+					this.originIndex].videosInfo.likes) || 0
+				return num1 + num2;
+			}
+		},
 		onLoad(e) {
 			console.log('这查票在要', e);
 			// 短视频id
@@ -201,6 +214,22 @@
 				this.videosId = parseInt(e.vid || e.videosId)
 			}
 
+			// 未登录
+			if (userServe.checkUserLogin() == false) {
+				userServe.userLogin(e.code, `/pages/home/video?moviesId=${this.moviesId}&videosId=${this.videosId}`).then(
+					data => {
+						this.getUserInfo();
+						this.getMoviesDetail();
+						this.getVideosList();
+					})
+			} else {
+				this.getUserInfo();
+				this.getMoviesDetail();
+				this.getVideosList();
+			}
+
+			this.windowWidth = uni.getSystemInfoSync().windowWidth
+
 			// 获取安全区 视频是不需要安全区的，只有文字啥的需要 TODO
 			uni.getSystemInfo({
 				success: res => {
@@ -210,12 +239,6 @@
 					}
 				}
 			})
-
-			this.windowWidth = uni.getSystemInfoSync().windowWidth
-
-			this.getUserInfo();
-			this.getMoviesDetail();
-			this.getVideosList();
 		},
 		onShow() {},
 		onShareAppMessage: function(res) {
@@ -239,7 +262,7 @@
 			return obj
 		},
 		methods: {
-			getUserInfo(){
+			getUserInfo() {
 				this.$api.users.me.request().then(data => {
 					this.userInfo = data;
 				})
@@ -247,7 +270,7 @@
 			// 获取短剧详情
 			getMoviesDetail() {
 				this.$api.movies.detail.request({}, {
-					url: this.$hostConfig.apiHost + '/' + 'movies/' + 1
+					url: this.$hostConfig.apiHost + '/' + 'movies/' + this.moviesId
 				}).then((data) => {
 					this.moviesInfo = data;
 					this.setStorage();
@@ -258,24 +281,28 @@
 				this.originList = []
 
 				this.$api.movies.videos.request({}, {
-					url: this.$hostConfig.apiHost + '/' + 'movies/' + 1 + '/videos'
+					url: this.$hostConfig.apiHost + '/' + 'movies/' + this.moviesId + '/videos'
 				}).then(data => {
 					// 如果数据为空
 					let list = data;
 					if (list.length > 0) {
+						let selectIndex = -1;
 						for (let i = 0; i < list.length; i++) {
 							list[i]._id = 'video_' + list[i].id;
 							list[i].videosInfo = null;
+
+							if (list[i].id == this.videosId) {
+								selectIndex = i;
+							}
+
 							this.originList.push(list[i])
 						}
 
 						// 首次计算播放视频
-						if (this.originIndex < 0) {
-							if (this.videosId < 0 || this.videosId > this.originList.length - 1) {
-								this.originIndex = 0;
-							} else {
-								this.originIndex = this.videosId || 0;
-							}
+						if (selectIndex > 0) {
+							this.originIndex = selectIndex || 0;
+						} else {
+							this.originIndex = 0;
 						};
 
 						console.log('播放视频', this.originIndex);
@@ -425,6 +452,9 @@
 
 				// 旧的视频进行暂停
 				let oldInfo = this.originList[this.originOldIndex];
+				uni.createVideoContext('video_' + 0, this).seek(-1);
+				uni.createVideoContext('video_' + 1, this).seek(-1);
+				uni.createVideoContext('video_' + 2, this).seek(-1);
 
 				// #ifdef MP-WEIXIN
 				uni.createVideoContext('video_' + 0, this).stop(); // 微信小程序
@@ -511,7 +541,10 @@
 				// 打开弹窗
 				if (this.rechargeModel.show == true) {
 					this.$api.goods.list.request().then(data => {
-						this.rechargeModel.data = data;
+						this.rechargeModel.data = data.map(item => {
+							item.price = div(item.price, 100)
+							return item
+						});
 					})
 				}
 			},
@@ -625,6 +658,7 @@
 					this.$api.orders.check.request({}, {
 						url: this.$hostConfig.apiHost + '/' + 'orders/' + orderId + '/pay/check'
 					}).then(data => {
+						clearInterval(timer);
 						this.watchChange();
 					})
 				}, 1000)
@@ -677,6 +711,7 @@
 				}
 			},
 			timeupdate(event, index) {
+				console.log('时间发生变化', )
 				this.timeduration = event.detail.duration;
 				this.progressBarPercent = parseFloat(Number(event.detail.currentTime / event.detail.duration));
 			},

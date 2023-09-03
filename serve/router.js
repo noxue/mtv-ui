@@ -18,10 +18,10 @@ export const tabPageList = [
 // 常用列表页,用来支持各个插件使用,基本是常用的
 export const pageList = {
 	'home': '/pages/home/home', //首页,涉及到后退，异常等操作必须配置
-	'login': '/pages/login/login', //用户授权登录
-	'register': '/pages/login/login', //用户注册页
-	'errorPage': '/pages/index/index', // 当页面发生异常的情况下跳转的页面
-	'tokenError': '/pages/index/index', // token过期或异常转跳的页面
+	'login': '/pages/home/home', //用户授权登录
+	'register': '/pages/home/home', //用户注册页
+	'errorPage': '/pages/home/home', // 当页面发生异常的情况下跳转的页面
+	'tokenError': '/pages/home/home', // token过期或异常转跳的页面
 }
 
 // 登录成功后后退上一页，如果上一页为以下url则会退到到首页
@@ -74,7 +74,7 @@ export function toPage(url, data, type = 'navigateTo', config) {
 
 	// 配置参数
 	if (data) url += '?' + objectToParams(data)
-	
+
 	switch (type) {
 		case 'switchTab':
 			uni.switchTab({
@@ -123,7 +123,6 @@ export function toPageName(name, params, type = 'navigateTo', config) {
  */
 export function toBack(funName, funParams, delayTime = 0) {
 	let upPage = getUpPage();
-	console.log(upPage);
 	if (upPage) {
 		if (funName && typeof upPage.$vm[funName] == 'function') {
 			upPage.$vm[funName](funParams);

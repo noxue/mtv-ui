@@ -46,31 +46,7 @@
  **************************************************************/
 
 //服务器配置
-import hostConst from '@/config/hostConfig.js'
-import userServe from '@/serve/userServe.js'
-import router from '@/serve/router.js'
 import requestServe from '@/api/requestServe.js';
-import apiFun from './apiFun.js';
-
-// 配置参数
-// let requestServe = new requestServeObj();
-requestServe.baseUrl = hostConst.apiHost + '/';
-requestServe.codeFunList = {
-	"301": router.toLogin,
-	"401": () => { // token 过期
-		userServe.logout()
-
-		setTimeout(function() {
-			router.toPageName('home')
-		}, 1500)
-	}
-}
-requestServe.checkUserLogin = userServe.checkUserLogin;
-requestServe.checkUserRegister = userServe.checkUserRegister;
-requestServe.userWxLogin = userWxLogin;
-requestServe.getUserToken = function() {
-	return userServe.getUserToken();
-}
 
 //接口配置
 const $api = {
@@ -287,85 +263,6 @@ const $api = {
 				return promise(this, data, config);
 			}
 		}
-	}
-}
-
-// 用户登录
-export function userWxLogin() {
-	let that = this;
-
-	return new Promise((r, a) => {
-		uni.login({
-			provider: 'weixin',
-			success: function(loginRes) {
-				$api.wx.login.request({
-					code: loginRes.code,
-					login_type: 'weapp'
-				}).then(data => {
-
-					let {
-						token,
-						regist,
-						openid, // 是否注册
-					} = data
-
-					userServe.createUserInfo({
-						token,
-						openid,
-						regist // 是否注册
-					})
-
-					userSetChannel();
-					r()
-				}, () => {
-					a()
-				});
-			}
-		});
-	})
-}
-
-// 使用code方式登录
-export function userCodeLogin(code, loginType) {
-	let that = this;
-
-	return new Promise((r, a) => {
-		api.wx.login.request({
-			code: code,
-			login_type: loginType
-		}).then(data => {
-			let {
-				token,
-				openid, // 是否注册
-			} = data
-
-			userServe.createUserInfo({
-				token,
-				openid,
-			})
-
-			userSetChannel();
-
-			r()
-		}, () => {
-			a()
-		});
-	})
-}
-
-
-/**
- * 设置用户渠道
- */
-function userSetChannel() {
-	let channel = uni.getStorageSync('channel');
-
-	if (channel) {
-		$api.users.channel.request({
-			channel: channel
-		}).then(data => {
-			// TODO 是否删除渠道参数
-		})
 	}
 }
 

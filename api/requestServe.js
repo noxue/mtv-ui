@@ -1,4 +1,7 @@
 import mock from './mock.js'
+import {
+	appid
+} from '@/config/config.js'
 
 /**
  * 在wx.request封装的配置层
@@ -48,7 +51,7 @@ class requestServe {
 
 		// code处理
 		this.codeSuccess = 0 // [code]正常类型
-		this.codeError = 200 // [code]通用错误类型
+		this.codeError = -1 // [code]通用错误类型
 		this.codeFunList = {} // [code]其他登录错误类型,处理codeSuccess,codeError以外的情况
 
 		// 防抖缓存
@@ -68,6 +71,7 @@ class requestServe {
 	getUserToken() {}
 	checkUserLogin() {}
 	checkUserRegister() {}
+	userLogout() {}
 
 	/**
 	 * 数据请求
@@ -91,11 +95,13 @@ class requestServe {
 		// 增加appid
 		if (uni.getAccountInfoSync) {
 			let sysInfo = uni.getAccountInfoSync();
-			if (sysInfo) {
-				config.header['appid'] = 'wx0fe731a495a2841a'; // sysInfo.api;
+			if (sysInfo && sysInfo.miniProgram && sysInfo.miniProgram.appId) {
+				config.header['appid'] = sysInfo.miniProgram.appId;
+			} else {
+				config.header['appid'] = appid;
 			}
 		} else {
-			config.header['appid'] = 'wx190455d0f223c92d' // 公众号
+			config.header['appid'] = appid
 		}
 
 		// 开启模拟数据
@@ -139,7 +145,8 @@ class requestServe {
 			// 用户未登录
 			if (this.checkUserLogin() == false) {
 				// 重新登录,再次请求,如果不需要可以直接返回首页
-				this.userLoginAsync(config);
+				// this.userLoginAsync(config);
+				this.userLogout();
 				return false;
 			}
 		} else if (config.apiType == 'register') { // 需要用户注册

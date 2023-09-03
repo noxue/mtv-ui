@@ -1,7 +1,7 @@
 {
-    "name" : "uniapp-frame",
+    "name" : "短剧",
     "appid" : "__UNI__598D78F",
-    "description" : "",
+    "description" : "短剧",
     "versionName" : "1.0.0",
     "versionCode" : "100",
     "transformPx" : false,
@@ -72,7 +72,9 @@
     "h5" : {
         "template" : "template.h5.html",
         "router" : {
-            "mode" : "history"
-        }
+            "mode" : "history",
+            "base" : ""
+        },
+        "title" : "短剧"
     }
 }

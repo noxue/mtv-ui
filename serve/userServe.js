@@ -3,6 +3,10 @@ import {
 	toPageLogin,
 	toPageRegister,
 } from '@/serve/router.js';
+import {
+	getAuthUrl
+} from '@/serve/wxH5.js';
+import $api from '@/api/api.js';
 
 /**
  * 用户模块
@@ -16,6 +20,112 @@ class userServe {
 	 * @param {Object} data
 	 */
 	constructor(data) {}
+
+
+	/**
+	 * 用户登录
+	 */
+	userLogin(code, url = '') {
+
+		// #ifdef H5
+		console.log('用户跳转', code, url);
+
+		// 微信H5环境
+		var ua = window.navigator.userAgent.toLowerCase();
+		if (ua.match(/micromessenger/i) == 'micromessenger') {
+			if (code) {
+				return this.userCodeLogin(code, 'mp');
+			} else {
+				console.log('getAuthUrl(url)', getAuthUrl(url));
+				window.location.href = getAuthUrl(url);
+			}
+		}
+		// #endif
+
+		// #ifdef MP
+		return this.userWxLogin();
+		// #endif
+	}
+
+
+	/**
+	 * 这里主要放不能非页面接口
+	 */
+	userWxLogin() {
+		let that = this;
+
+		return new Promise((r, a) => {
+			uni.login({
+				provider: 'weixin',
+				success: function(loginRes) {
+					$api.wx.login.request({
+						code: loginRes.code,
+						login_type: 'weapp'
+					}).then(data => {
+
+						let {
+							token,
+							openid,
+						} = data
+
+						that.createUserInfo({
+							token,
+							openid,
+						})
+
+						that.userSetChannel();
+
+						r()
+					}, () => {
+						a()
+					});
+				}
+			});
+		})
+	}
+
+
+	// 使用code方式登录
+	userCodeLogin(code, loginType) {
+		let that = this;
+		return new Promise((r, a) => {
+			$api.wx.login.request({
+				code: code,
+				login_type: loginType
+			}).then(data => {
+				let {
+					token,
+					openid, // 是否注册
+				} = data
+
+				this.createUserInfo({
+					token,
+					openid,
+				})
+
+				this.userSetChannel();
+
+				r()
+			}, () => {
+				a()
+			});
+		})
+	}
+
+	/**
+	 * 设置用户渠道
+	 */
+	userSetChannel() {
+		let channel = uni.getStorageSync('channel');
+
+		if (channel) {
+			$api.users.channel.request({
+				channel: channel
+			}).then(data => {
+				// TODO 是否删除渠道参数
+			})
+		}
+	}
 
 	/**
 	 * 获取用户token

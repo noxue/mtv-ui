@@ -2,7 +2,7 @@
 	<view class="loveList-page page-base">
 		<view class="goods-list m-t-200">
 			<view class="goods-item" v-for="(item,index) in list" @click="$wxRouter.toPage('/pages/home/video')">
-				<view class="w-180 h-200" style="position: relative;">
+				<view class="w-180 h-240" style="position: relative;">
 					<image class="w-h-full" :src="item.cover || '/static/logo.png'"></image>
 				</view>
 				<view class="m-l-15 flex-column-center flex-1">

@@ -7,8 +7,8 @@
 					<view class="font-28" style="font-weight: 700;">{{item.movie_name}}</view>
 					<view class="flex-row m-t-10">看到<view class="m-l-5" style="color:#fd9261;">第TODO集</view>
 					</view>
-					<view class="flex-row m-t-10">更新至<view class="m-l-5" style="font-weight: 700;">第TODO集</view>
-					</view>
+		<!-- 			<view class="flex-row m-t-10">更新至<view class="m-l-5" style="font-weight: 700;">第TODO集</view>
+					</view> -->
 				</view>
 				<image class="w-35 h-50 m-r-20" src="@/static/logo.png" @click="pageListItemRemove(item)"></image>
 			</view>

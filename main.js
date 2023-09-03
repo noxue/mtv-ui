@@ -1,9 +1,11 @@
 import App from './App'
 import Vue from 'vue'
+import '@/api/index.js'
 
 App.mpType = 'app'
 Vue.config.productionTip = false
 
+import '@/api/index.js'
 // 通用方法配置
 import $api from '@/api/api.js'
 import $router from '@/serve/router.js'
