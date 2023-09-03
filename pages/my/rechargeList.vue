@@ -2,80 +2,62 @@
 	<view class="orderList-page page-base">
 		<!-- 商品列表 -->
 		<view class="goods-list">
-			<view class="goods-item" v-for="(item,index) in 10">
-				<view class="flex-row-between-center p-tb-10">
-					<view>订单号:</view>
-					<view>状态码</view>
-				</view>
-				<view class="flex-row-start-center m-t-20">
-					<image class="w-h-130  bR-20" src="../../static/logo.png"></image>
-					<view class="m-l-20">
-						<view>商品名称:xxxxxxxxx</view>
-						<view>赠送金币:xxxxxxxxx</view>
-						<view>支付日期:xxxxxxxxx</view>
+			<view class="goods-item flex-row-start-center" style="border-bottom: 1px solid #f1f1f1;"
+				v-for="(item,index) in pageList.data">
+				<image class="w-h-80 flex-shrink-0" src="@/static/jinbi.png"></image>
+				<view class="flex-1 m-l-20">
+					<view class="flex-row-between-center">
+						<view>{{item.mark}}</view>
+						<view style="color: #00a232;">+ {{item.score}} 金币</view>
+					</view>
+					<view class="flex-row-between-center m-t-10" style="color: #a5a5a5;">
+						<view>{{item.update_time}}</view>
+						<view>{{item.amount}}元</view>
 					</view>
 				</view>
 			</view>
-			<!-- <emptyBottom></emptyBottom> -->
+
+			<pageList :pageList="pageList"></pageList>
 		</view>
 	</view>
 </template>
 
 <script>
+	import pageList from '@/mixin/pageList.js';
+	import {
+		div
+	} from '@/function/bc.js';
+
 	export default {
+		mixins: [pageList],
 		components: {},
 		data() {
-			return {
-				list: [],
-				value1: 1,
-				options1: [{
-						label: '商品名称',
-						value: 1,
-					},
-					{
-						label: '订单编号',
-						value: 2,
-					},
-					{
-						label: '办理号码',
-						value: 3,
-					}
-				],
-				value2: 2,
-				options2: [{
-						label: '全部状态',
-						value: 1,
-					},
-					{
-						label: '下单成功',
-						value: 2,
-					},
-					{
-						label: '激活成功',
-						value: 3,
-					},
-					{
-						label: '充值成功',
-						value: 4,
-					},
-					{
-						label: '下单失败',
-						value: 5,
-					},
-				],
-			}
+			return {}
 		},
 		onLoad() {},
 		onReady() {},
 		onPullDownRefresh() {},
 		onReachBottom() {},
-		methods: {}
+		methods: {
+			pageListDataPageRequest(params) {
+				return new Promise((r, a) => {
+					this.$api.users.recharges.request(params).then(data => {
+						let list = data.data.map(item => {
+							item.amount = div(item.amount, 100)
+							item.update_time = new Date(item.update_time).toLocaleString();
+							return item;
+						})
+
+						r(list)
+					})
+				})
+			},
+		}
 	}
 </script>
 
 <style lang="scss">
 	.orderList-page {
-		padding: 0rpx 20rpx;
 
 		.saerch-view {
 			display: flex;
@@ -97,13 +79,11 @@
 			}
 		}
 	}
-	
-	.goods-list{
-		.goods-item{
-			margin-bottom: 20rpx;
+
+	.goods-list {
+		.goods-item {
 			padding: 20rpx;
-			width: 700rpx;
-			border-radius: 20rpx;
+			width: 750rpx;
 			background-color: #fff;
 		}
 	}

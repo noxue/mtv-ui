@@ -70,7 +70,7 @@
 		{
 			"path": "pages/my/rechargeList",
 			"style": {
-				"navigationBarTitleText": "充值列表"
+				"navigationBarTitleText": "充值记录"
 			}
 		}, {
 			"path": "pages/nvueSwiper/nvueSwiper",
@@ -101,7 +101,7 @@
 		}, {
 			"pagePath": "pages/my/my",
 			"text": "我的",
-			"iconPath": "static/icon/yzy_wds.png",
+			"iconPath": "static/icon/yzy_wd.png",
 			"selectedIconPath": "static/icon/yzy_wds.png"
 		}]
 	},

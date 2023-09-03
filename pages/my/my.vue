@@ -49,7 +49,8 @@
 				<view class="tab-text">消费记录</view>
 				<image class="tab-arrows" src="@/static/jiantou-you.png"></image>
 			</view>
-			<view class="tab-item">
+			<view class="tab-item" style="position: relative;">
+				<button class="opacityButton" open-type="contact"></button>
 				<image class="tab-icon" src="@/static/my-6.png"></image>
 				<view class="tab-text">联系客服</view>
 				<image class="tab-arrows" src="@/static/jiantou-you.png"></image>

@@ -11,7 +11,7 @@
 					<!-- 				<view class="flex-row m-t-10">更新至<view class="m-l-5" style="font-weight: 700;">{{item.video_name}}</view>
 					</view> -->
 				</view>
-				<image class="w-35 h-50 m-r-20" src="@/static/logo.png" @click.stop="pageListItemRemove(item)"></image>
+				<image class="w-55 h-50 m-r-20" src="@/static/play-icon.png" @click.stop="pageListItemRemove(item)"></image>
 			</view>
 		</view>
 

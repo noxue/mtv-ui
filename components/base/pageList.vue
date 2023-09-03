@@ -37,7 +37,7 @@
 			},
 			bottomHeight: { // 距离底部距离
 				type: String,
-				default: '200'
+				default: '100'
 			},
 			emptyDataHeight: { // 数据为空的显示的数据的高度
 				type: String,

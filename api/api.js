@@ -89,6 +89,30 @@ const $api = {
 				return promise(this, data, config);
 			}
 		},
+		recharges: {
+			name: '充值记录',
+			api: 'users/recharges',
+			method: 'GET',
+			apiType: 'login',
+			showLoading: false,
+			showErrorLoading: false,
+			showSuccessLoading: false,
+			request: function(data = {}, config = {}) {
+				return promise(this, data, config);
+			}
+		},
+		consumes: {
+			name: '消费记录',
+			api: 'users/consumes',
+			method: 'GET',
+			apiType: 'login',
+			showLoading: false,
+			showErrorLoading: false,
+			showSuccessLoading: false,
+			request: function(data = {}, config = {}) {
+				return promise(this, data, config);
+			}
+		},
 		follows: {
 			name: '我的追剧',
 			api: 'users/follows',

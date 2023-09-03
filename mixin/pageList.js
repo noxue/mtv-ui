@@ -12,7 +12,7 @@ module.exports = {
 				data: [], // 数据列表
 				dataKey: 'id', // data 主键，用来更新/移除使用，默认id
 				total: 0, // 总数
-				pageSize: 10, // 每次请求页面
+				pageSize: 15, // 每次请求页面
 				pageNum: 1, // 当前页码
 				pageStatus: 0, // 0 无状态 1加载前 5加载中 10没有更多 99空数据
 				uniPageStatus: {
@@ -106,8 +106,8 @@ module.exports = {
 			}
 			console.log(3);
 			this.pageListDataPageRequest({
-				pageNum: this.pageList.pageNum,
-				pageSize: this.pageList.pageSize,
+				page: this.pageList.pageNum,
+				size: this.pageList.pageSize,
 			}).then(list => {
 				console.log('翻页数据', list);
 

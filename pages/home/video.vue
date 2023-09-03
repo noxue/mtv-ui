@@ -834,9 +834,10 @@
 	}
 
 	.playState {
+		z-index: 10;
 		width: 120rpx;
 		height: 120rpx;
-		opacity: 0.2;
+		opacity: 0.5;
 	}
 
 	.userInfo {
