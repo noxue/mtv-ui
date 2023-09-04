@@ -5,7 +5,7 @@ import {
 /**
  * 获取微信auth认证链接地址
  */
-export function getAuthUrl(url) {
+export function getAuthUrl(url = '') {
 	let str = appid;
 	let redirect_uri = encodeURIComponent(`${location.origin}${url}`); // 回调地址
 	let state = encodeURIComponent(("" + Math.random()).split(".")[1] + "authorizestate"); // 自动登录模式

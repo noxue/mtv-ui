@@ -10,17 +10,18 @@
 				<view :style="'width: '+ windowWidth +'px; height:'+heightxw+'vh;'">
 
 					<!-- 视频  v-if="index == displayIndex" :autoplay="true"-->
-					<video :id="'video_' + index" :controls="false" :loop="false" :enable-progress-gesture="false"
-						:show-center-play-btn="true" :show-loading="true" :show-fullscreen-btn="false" @ended="videoEnd"
-						@click="tapVides()" @pause="playStatusChange(0)" @play="playStatusChange(1)"
-						:style="'width: '+ windowWidth +'px; height:'+heightxw+'vh; z-index: -1'" :poster="moviesInfo.cover"
-						@timeupdate="timeupdate($event,index)" :src="list.videosInfo && list.videosInfo.video" class="tsvideo"
-						x5-video-player-type="h5" x5-video-player-fullscreen="true" webkit-playsinline="true" playsinline>
+					<video v-if="index == displayIndex" :id="'video_' + index" :controls="false" :loop="false"
+						:enable-progress-gesture="false" :show-center-play-btn="true" :show-loading="true"
+						:show-fullscreen-btn="false" @ended="videoEnd" @click="tapVides()" @pause="playStatusChange(2)"
+						@play="playStatusChange(1)" :style="'width: '+ windowWidth +'px; height:'+heightxw+'vh; z-index: 1'"
+						:poster="moviesInfo.cover" @timeupdate="timeupdate($event,index)"
+						:src="list.videosInfo && list.videosInfo.video" :autoplay="true" class="tsvideo" x5-video-player-type="h5"
+						x5-video-player-fullscreen="true" webkit-playsinline="true" playsinline>
 					</video>
 
 					<!-- 视频不存在的时候弹出 -->
 					<view v-if="index != displayIndex || !list.videosInfo || playStatus == 0 " class="videoHover tsimg"
-						@click.stop="watchChange" :style="'width: '+ windowWidth +'px; height:'+heightxw+'vh;'">
+						@click.stop="watchChange" :style="'width: '+ windowWidth +'px; height:'+heightxw+'vh;z-index:10;'">
 						<imageUrl :src="moviesInfo.cover"
 							:style="'width: 100vw; height:'+heightxw+'vh; background-color: #000; position: absolute;'">
 						</imageUrl>
@@ -65,8 +66,9 @@
 						</view>
 
 						<!-- 进度条 -->
-						<view class="flex-row-start-center" style="position: absolute; bottom: 50rpx;">
-							<view @touchstart="touchstart" @touchmove="touchmove" @touchend="touchend"
+						<view class="flex-row-start-center" style="position: absolute; bottom: 50rpx;z-index: 10;">
+							<!-- @touchstart="touchstart" @touchmove="touchmove" @touchend="touchend" -->
+							<view
 								:style="'width: '+ (windowWidth - (windowWidth*0.20)) +'px; margin-left: '+ (windowWidth * 0.05) +'px;'">
 								<!-- 不拖动情况下 -->
 								<view style="width: 100%;height: 10rpx;position: relative;">
@@ -85,7 +87,7 @@
 								</view>
 							</view>
 							<view class="w-40 h-50 m-l-30" style="flex-shrink:0;" @click.stop="videoChange">
-								<image v-if="playStatus == 0" class="w-h-full" src="@/static/play.png"></image>
+								<image v-if="playStatus == 0 || playStatus == 2" class="w-h-full" src="@/static/play.png"></image>
 								<image v-if="playStatus == 1" class="w-h-full" src="@/static/play-pause.png"></image>
 							</view>
 						</view>
@@ -136,15 +138,20 @@
 						</view>
 					</view>
 					<view class="goods-list">
-						<view v-for="(item,index) in rechargeModel.data" :key="index" @click="goodsClick(item)" class="goods-item">
+						<view v-for="(item,index) in rechargeModel.data" :key="index" @click="goodsClick(item)" class="goods-item"
+							:class="{'hot-1':item.is_hot == true}">
+							<view class="hot-sign p-top-right" v-if="item.is_hot == true">
+								特惠
+							</view>
 							<view class="font-34">
 								{{item.price}}<text style="font-size: 24rpx;margin-left: 5rpx;">元</text>
 							</view>
 							<view class="font-25 m-t-15" style="color:#777777;">
-								{{item.score}}金币
-							</view>
-							<view class="font-25 m-t-15" style="color:#fe5000">
 								{{item.description}}
+							</view>
+							<view class="font-25 m-t-15 w-full goods-bottom" :class="{'hot-2':item.is_hot == true}"
+								style="color:#fe5000;border-top:1px solid #f1f1f1;text-align: center;height: 60rpx;line-height: 1em;display: flex;align-items: center;justify-content: center;">
+								{{item.name}}
 							</view>
 						</view>
 					</view>
@@ -364,6 +371,7 @@
 			},
 			// 视频结束
 			videoEnd() {
+				console.log('视频播放结束');
 				// 自动切换下一个视频
 				if (this.isAutoPaly) {
 					let current;
@@ -453,9 +461,9 @@
 
 				// 旧的视频进行暂停
 				let oldInfo = this.originList[this.originOldIndex];
-				uni.createVideoContext('video_' + 0, this).seek(-1);
-				uni.createVideoContext('video_' + 1, this).seek(-1);
-				uni.createVideoContext('video_' + 2, this).seek(-1);
+				uni.createVideoContext('video_' + 0, this).seek(0);
+				uni.createVideoContext('video_' + 1, this).seek(0);
+				uni.createVideoContext('video_' + 2, this).seek(0);
 
 				// #ifdef MP-WEIXIN
 				uni.createVideoContext('video_' + 0, this).stop(); // 微信小程序
@@ -503,17 +511,17 @@
 
 				setTimeout(() => {
 					// #ifdef MP
-					uni.createVideoContext('video_' + this.displayIndex, this).seek(-1);
+					uni.createVideoContext('video_' + this.displayIndex, this).seek(0);
 					uni.createVideoContext('video_' + this.displayIndex, this).play();
 					// #endif
 
 					// #ifdef H5
 					if (typeof WeixinJSBridge == "undefined") {
-						uni.createVideoContext('video_' + this.displayIndex, this).seek(-1);
+						uni.createVideoContext('video_' + this.displayIndex, this).seek(0);
 						uni.createVideoContext('video_' + this.displayIndex, this).play();
 					} else {
 						WeixinJSBridge.invoke('getNetworkType', {}, e => {
-							uni.createVideoContext('video_' + this.displayIndex, this).seek(-1);
+							uni.createVideoContext('video_' + this.displayIndex, this).seek(0);
 							uni.createVideoContext('video_' + this.displayIndex, this).play();
 						})
 					}
@@ -522,7 +530,7 @@
 			},
 			videoChange() {
 				console.log('视频播放变化');
-				if (this.playStatus == 0) {
+				if (this.playStatus == 0 || this.playStatus == 2) {
 					uni.createVideoContext('video_' + this.displayIndex, this).play();
 				} else {
 					// #ifdef MP-WEIXIN
@@ -532,7 +540,7 @@
 					uni.createVideoContext('video_' + this.displayIndex, this).pause(); // 其他平台
 					// #endif
 
-					this.playStatus == 0
+					this.playStatus == 2
 				}
 			},
 			// 打开/关闭充值
@@ -1014,11 +1022,12 @@
 	}
 
 	.goods-item {
+		position: relative;
 		margin-top: 25rpx;
+		padding-top: 20rpx;
 		width: 332rpx;
-		height: 208rpx;
 		border: 1px solid #e8e8e8;
-		border-radius: 10rpx;
+		border-radius: 20rpx;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -1031,5 +1040,30 @@
 		padding: 10rpx;
 		color: #fff;
 		font-size: 24rpx;
+	}
+
+	.hot-1 {
+		background-color: rgb(249, 233, 243);
+		color: #000;
+	}
+
+	.hot-2 {
+		background-color: rgb(251, 103, 161);
+		color: #fff !important;
+	}
+	
+	.hot-sign{
+		background-color: rgb(253,0,3);
+		border: 1px solid #be3c44;
+		padding: 2rpx 4rpx;
+		color: #fff;
+		border-radius: 15rpx;
+		right: -10rpx;
+		top: -10rpx;
+	}
+	
+	.goods-bottom{
+		border-bottom-left-radius: 20rpx;
+		border-bottom-right-radius: 20rpx;
 	}
 </style>

@@ -49,12 +49,22 @@
 				<view class="tab-text">消费记录</view>
 				<image class="tab-arrows" src="@/static/jiantou-you.png"></image>
 			</view>
+			<!-- #ifdef h5 -->
+			<view class="tab-item" style="position: relative;" @click="toKeFu">
+				<button class="opacityButton" open-type="contact"></button>
+				<image class="tab-icon" src="@/static/my-6.png"></image>
+				<view class="tab-text">联系客服</view>
+				<image class="tab-arrows" src="@/static/jiantou-you.png"></image>
+			</view>
+			<!-- #endif -->
+			<!-- #ifdef MP -->
 			<view class="tab-item" style="position: relative;">
 				<button class="opacityButton" open-type="contact"></button>
 				<image class="tab-icon" src="@/static/my-6.png"></image>
 				<view class="tab-text">联系客服</view>
 				<image class="tab-arrows" src="@/static/jiantou-you.png"></image>
 			</view>
+			<!-- #endif -->
 		</view>
 	</view>
 </template>
@@ -87,6 +97,9 @@
 					console.log(data);
 					this.userInfo = data;
 				})
+			},
+			toKeFu() {
+				window.location.href = 'wwww.baidu.com'
 			}
 		}
 	}
