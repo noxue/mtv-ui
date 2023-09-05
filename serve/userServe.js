@@ -122,7 +122,8 @@ class userServe {
 			$api.users.channel.request({
 				channel: channel
 			}).then(data => {
-				uni.removeStorage('channel')
+				console.log('移除缓存')
+				uni.setStorageSync('channel',null)
 			})
 		}
 	}
