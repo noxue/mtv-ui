@@ -122,7 +122,7 @@ class userServe {
 			$api.users.channel.request({
 				channel: channel
 			}).then(data => {
-				// TODO 是否删除渠道参数
+				uni.removeStorage('channel')
 			})
 		}
 	}

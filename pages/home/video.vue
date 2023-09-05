@@ -232,6 +232,7 @@
 						this.getUserInfo();
 						this.getMoviesDetail();
 						this.getVideosList();
+						userServe.userSetChannel();
 					})
 			} else {
 				this.getUserInfo();
