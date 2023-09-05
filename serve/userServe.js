@@ -123,7 +123,7 @@ class userServe {
 				channel: channel
 			}).then(data => {
 				console.log('移除缓存')
-				uni.setStorageSync('channel',null)
+				uni.removeStorageSync('channel')
 			})
 		}
 	}
