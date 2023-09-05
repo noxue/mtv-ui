@@ -598,7 +598,7 @@
 				return new Promise((r, a) => {
 					WeixinJSBridge.invoke(
 						'getBrandWCPayRequest', {
-							"appId": "wx190455d0f223c92d", //公众号名称，由商户传入     
+							"appId": "wx77e8a521a39c2b9d", //公众号名称，由商户传入     
 							"timeStamp": payData.timestamp, //时间戳，自1970年以来的秒数     
 							"nonceStr": payData.nonce_str, //随机串     
 							"package": 'prepay_id=' + payData.prepay_id,
