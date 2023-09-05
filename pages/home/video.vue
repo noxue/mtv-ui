@@ -613,9 +613,20 @@
 
 							if (res.err_msg == "get_brand_wcpay_request:ok") {
 								r();
+							} else if (res.err_msg.indexOf('cancel') > -1) {
+								uni.showToast({
+									title: '支付取消,返回首页',
+									icon: 'none'
+								});
+
+								setTimeout(() => {
+									uni.switchTab({
+										url: '/pages/home/home'
+									})
+								}, 1500)
 							} else {
 								uni.showModal({
-									content: '支付失败,原因为: ' + e.err_msg,
+									content: '支付失败,原因为: ' + res.err_msg,
 									showCancel: false
 								});
 
@@ -1085,11 +1096,13 @@
 		border-bottom-left-radius: 20rpx;
 		border-bottom-right-radius: 20rpx;
 	}
-	.select-video{
+
+	.select-video {
 		font-weight: 900;
-		
+
 	}
-	.back-btn{
+
+	.back-btn {
 		font-weight: 900;
 	}
 </style>
