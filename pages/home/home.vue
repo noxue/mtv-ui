@@ -64,7 +64,7 @@
 			// 用户进行登录
 			if (this.$userServe.checkUserLogin() == false) {
 				this.$userServe.userLogin(this.options.code).then(data => {
-					userServe.userSetChannel();
+					this.$userServe.userSetChannel();
 				})
 			}
 		},
