@@ -168,6 +168,9 @@
 	import {
 		div
 	} from '@/function/bc.js';
+	import {
+		appid
+	} from '@/config/config.js'
 
 	export default {
 		data() {
@@ -598,7 +601,7 @@
 				return new Promise((r, a) => {
 					WeixinJSBridge.invoke(
 						'getBrandWCPayRequest', {
-							"appId": "wx77e8a521a39c2b9d", //公众号名称，由商户传入     
+							"appId": appid, //公众号名称，由商户传入     
 							"timeStamp": payData.timestamp, //时间戳，自1970年以来的秒数     
 							"nonceStr": payData.nonce_str, //随机串     
 							"package": 'prepay_id=' + payData.prepay_id,
@@ -623,8 +626,16 @@
 			},
 			wxPay(payData) {
 				return new Promise((r, a) => {
+					let appid;
+					let sysInfo = uni.getAccountInfoSync();
+					if (sysInfo && sysInfo.miniProgram && sysInfo.miniProgram.appId) {
+						appid = sysInfo.miniProgram.appId;
+					} else {
+						appid = appid;
+					}
+
 					uni.requestPayment({
-						appId: 'wx0fe731a495a2841a',
+						appId: appid,
 						signType: payData.sign_type,
 						nonceStr: payData.nonce_str,
 						package: 'prepay_id=' + payData.prepay_id,
