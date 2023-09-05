@@ -112,7 +112,7 @@
 			position: fixed;
 			top: 0rpx;
 			/* #ifdef H5 */
-			top: 44px;
+			top: 0px;
 			/* #endif */
 			left: 0;
 			width: 100%;

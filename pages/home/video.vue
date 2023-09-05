@@ -58,10 +58,10 @@
 								{{moviesInfo.name || '短剧标题'}}
 							</text>
 							<text class="wordss" :style="'width: '+ (windowWidth - 90) +'px;'">
-								{{moviesInfo.description || '短剧介绍'}}
+								{{moviesInfo.description}}
 							</text>
 							<text class="words" :style="'width: '+ (windowWidth - 90) +'px;'">
-								{{list.name}} 共{{originList.length}}集 选集>
+								{{list.name}} 共{{originList.length}}集 <text class="font-36 m-l-10">选集></text>
 							</text>
 						</view>
 
@@ -146,7 +146,7 @@
 							<view class="font-34">
 								{{item.price}}<text style="font-size: 24rpx;margin-left: 5rpx;">元</text>
 							</view>
-							<view class="font-25 m-t-15" style="color:#777777;">
+							<view v-if="item.description" class="font-25 m-t-15" style="color:#777777;">
 								{{item.description}}
 							</view>
 							<view class="font-25 m-t-15 w-full goods-bottom" :class="{'hot-2':item.is_hot == true}"
@@ -606,6 +606,8 @@
 							"paySign": payData.pay_sign //微信签名 
 						},
 						function(res) {
+							console.log('支付结果', res)
+
 							if (res.err_msg == "get_brand_wcpay_request:ok") {
 								r();
 							} else {
@@ -637,9 +639,15 @@
 							// 支付取消的弹轻提示
 							if (e.errMsg.indexOf('cancel') > -1) {
 								uni.showToast({
-									title: '支付取消',
+									title: '支付取消,返回首页',
 									icon: 'none'
 								});
+
+								setTimeout(() => {
+									uni.switchTab({
+										url: '/pages/home/home'
+									})
+								}, 1500)
 							} else {
 								uni.showModal({
 									content: '支付失败,原因为: ' + e.errMsg,
@@ -1051,9 +1059,9 @@
 		background-color: rgb(251, 103, 161);
 		color: #fff !important;
 	}
-	
-	.hot-sign{
-		background-color: rgb(253,0,3);
+
+	.hot-sign {
+		background-color: rgb(253, 0, 3);
 		border: 1px solid #be3c44;
 		padding: 2rpx 4rpx;
 		color: #fff;
@@ -1061,8 +1069,8 @@
 		right: -10rpx;
 		top: -10rpx;
 	}
-	
-	.goods-bottom{
+
+	.goods-bottom {
 		border-bottom-left-radius: 20rpx;
 		border-bottom-right-radius: 20rpx;
 	}
