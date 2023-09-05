@@ -9,8 +9,11 @@
 	"pages": [{
 			"path": "pages/home/home",
 			"style": {
-				"navigationBarTitleText": "小剧场",
+				"navigationBarTitleText": "小剧场"
+					// #ifdef H5
+					,
 				"navigationStyle": "custom"
+				// #endif
 			}
 		}, {
 			"path": "pages/home/logo",
@@ -38,12 +41,14 @@
 				"navigationBarTitleText": "视频",
 				"navigationStyle": "custom"
 			}
-		},
-		{
+		}, {
 			"path": "pages/my/my",
 			"style": {
-				"navigationBarTitleText": "我的",
+				"navigationBarTitleText": "我的"
+					// #ifdef H5
+					,
 				"navigationStyle": "custom"
+				// #endif
 			}
 		}, {
 			"path": "pages/my/followsList",

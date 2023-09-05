@@ -1,8 +1,8 @@
 <template>
 	<view class="navbar flex-row-start-center" style="position: fixed;clear: #fff;"
 		:style="{ top: top + 'px', height: height + 'px', width: width }">
-		<view style="line-height: 1em;" class="m-l-20 flex-row-start-center" @click="toBack">
-			<image src="@/static/back.png" class="w-14 h-24"></image>
+		<view style="line-height: 1em;" class="m-l-40 flex-row-start-center font-34" @click="toBack">
+			<image src="@/static/back.png" class="w-18 h-30"></image>
 			<view class="m-l-8">{{title}}</view>
 		</view>
 	</view>
@@ -26,7 +26,7 @@
 		},
 		created() {
 			// #ifdef H5
-			this.top = 0;
+			this.top = 20;
 			this.height = 50;
 			this.width = '100vw';
 			// #endif
