@@ -49,7 +49,7 @@
 				<view class="tab-text">消费记录</view>
 				<image class="tab-arrows" src="@/static/jiantou-you.png"></image>
 			</view>
-			<!-- #ifdef h5 -->
+			<!-- #ifdef H5 -->
 			<view class="tab-item" style="position: relative;" @click="toKeFu">
 				<button class="opacityButton" open-type="contact"></button>
 				<image class="tab-icon" src="@/static/my-6.png"></image>
