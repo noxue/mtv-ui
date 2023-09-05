@@ -1,6 +1,6 @@
-'<template>
+<template>
 	<view class="content">
-		<navbar v-if="showTab" :title="'第'+(originIndex + 1) +'集'"></navbar>
+		<navbar v-if="showTab" :title="'返回'"></navbar>
 
 		<swiper :style="'width: '+ windowWidth +'px; height:100vh; background-color: #000;'" class="swiper" circular
 			@change="swiperChange" :current="displayIndex" :vertical="true" duration="300">
