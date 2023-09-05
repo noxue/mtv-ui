@@ -99,7 +99,7 @@
 				})
 			},
 			toKeFu() {
-				window.location.href = 'wwww.baidu.com'
+				window.location.href = 'http://wwww.baidu.com'
 			}
 		}
 	}
