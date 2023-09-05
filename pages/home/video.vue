@@ -1,6 +1,6 @@
 <template>
 	<view class="content">
-		<navbar v-if="showTab" :title="'返回'"></navbar>
+		<navbar v-if="showTab" class="back-btn" :title="'返回'"></navbar>
 
 		<swiper :style="'width: '+ windowWidth +'px; height:100vh; background-color: #000;'" class="swiper" circular
 			@change="swiperChange" :current="displayIndex" :vertical="true" duration="300">
@@ -61,7 +61,7 @@
 								{{moviesInfo.description}}
 							</text>
 							<text class="words" :style="'width: '+ (windowWidth - 90) +'px;'">
-								{{list.name}} 共{{originList.length}}集 <text class="font-36 m-l-10">选集></text>
+								{{list.name}} 共{{originList.length}}集 <text class="font-36 m-l-10 select-video">选集></text>
 							</text>
 						</view>
 
@@ -1073,5 +1073,12 @@
 	.goods-bottom {
 		border-bottom-left-radius: 20rpx;
 		border-bottom-right-radius: 20rpx;
+	}
+	.select-video{
+		font-weight: 900;
+		
+	}
+	.back-btn{
+		font-weight: 900;
 	}
 </style>
