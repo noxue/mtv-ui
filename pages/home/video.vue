@@ -521,9 +521,11 @@
 
 					// #ifdef H5
 					if (typeof WeixinJSBridge == "undefined") {
+						console.log('基础触发')
 						uni.createVideoContext('video_' + this.displayIndex, this).seek(0);
 						uni.createVideoContext('video_' + this.displayIndex, this).play();
 					} else {
+						console.log('微信自动触发')
 						WeixinJSBridge.invoke('getNetworkType', {}, e => {
 							uni.createVideoContext('video_' + this.displayIndex, this).seek(0);
 							uni.createVideoContext('video_' + this.displayIndex, this).play();
